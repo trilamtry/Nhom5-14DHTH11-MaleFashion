@@ -1,0 +1,79 @@
+﻿@model FashionStore.Models.Color
+
+@{
+    ViewBag.Title = "Xóa Màu sắc";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="page-header">
+    <h1 class="page-title text-danger">Xác nhận xóa Màu sắc</h1>
+    <p class="page-subtitle">Hành động này sẽ gỡ bỏ mã màu khỏi hệ thống vĩnh viễn.</p>
+</div>
+
+<div class="d-flex justify-content-center">
+    <div class="content-card col-12 col-md-6 border-danger-subtle">
+        <div class="card-header" style="background: rgba(239, 68, 68, 0.05);">
+            <div class="card-title text-danger">
+                <i class="bi bi-exclamation-triangle-fill"></i> Cảnh báo hệ thống
+            </div>
+        </div>
+
+        <div class="card-body">
+            @Html.ValidationSummary(true, "", new { @class = "alert alert-danger p-2 small mb-3" })
+
+            <div class="alert-item mb-4" style="background: rgba(239, 68, 68, 0.1); border-color: var(--danger);">
+                <div class="alert-info">
+                    <div class="product-name" style="font-size: 1.2rem;">@Model.ColorName</div>
+                    <div class="variant-info">Mã Hex: <code class="text-danger">@Model.ColorHex.ToUpper()</code></div>
+                </div>
+                <div class="stock-badge danger">
+                    <span class="rounded-circle border border-white"
+                          style="width: 30px; height: 30px; background-color: @Model.ColorHex;">
+                    </span>
+                </div>
+            </div>
+
+            <p class="text-secondary text-center mb-4">
+                Bạn có chắc chắn muốn xóa màu này? <br>
+                <small class="text-warning">Lưu ý: Hệ thống sẽ từ chối nếu màu đang liên kết với sản phẩm.</small>
+            </p>
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.ColorId)
+
+                <div class="d-flex flex-column gap-2">
+                    <button type="submit" class="btn btn-primary" style="background: var(--danger); border: none;">
+                        <i class="bi bi-trash-fill"></i> Xác nhận xóa ngay
+                    </button>
+                    <a href="@Url.Action("Index")" class="btn btn-secondary text-center">
+                        <i class="bi bi-x-circle"></i> Hủy và quay lại
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Hiệu ứng rung nhẹ khi trang load */
+    .border-danger-subtle {
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        animation: shake 0.4s ease-in-out;
+    }
+
+    @@keyframes shake {
+        0%, 100% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(-5px);
+        }
+
+        75% {
+            transform: translateX(5px);
+        }
+    }
+</style>

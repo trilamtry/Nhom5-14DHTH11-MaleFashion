@@ -1,0 +1,80 @@
+﻿@model FashionStore.Models.Color
+
+@{
+    ViewBag.Title = "Sửa Màu sắc";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="page-header">
+    <h1 class="page-title">Cập nhật Màu sắc</h1>
+    <p class="page-subtitle">Chỉnh sửa tên hiển thị và mã màu đại diện cho sản phẩm.</p>
+</div>
+
+<div class="d-flex justify-content-center">
+    <div class="content-card col-12 col-md-6">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="bi bi-palette-fill"></i> Chỉnh sửa thông tin màu
+            </div>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.ColorId)
+
+                <div class="form-group">
+                    <label class="form-label">Tên Màu</label>
+                    @Html.EditorFor(model => model.ColorName, new { htmlAttributes = new { @class = "form-control", placeholder = "Ví dụ: Xanh Navy" } })
+                    @Html.ValidationMessageFor(model => model.ColorName, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Mã Hex & Minh họa</label>
+                    <div class="d-flex gap-2">
+                        @Html.EditorFor(model => model.ColorHex, new { htmlAttributes = new { @class = "form-control", id = "hexInput", placeholder = "#000000" } })
+
+                        @* Input chọn màu trực quan *@
+                        <input type="color" class="form-control form-control-color" id="colorPicker"
+                               value="@Model.ColorHex" title="Chọn màu trực quan"
+                               style="width: 60px; padding: 6px; cursor: pointer;">
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ColorHex, "", new { @class = "text-danger small" })
+                </div>
+
+                <hr class="my-4" style="border-color: var(--border-color);">
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Cập nhật thay đổi
+                    </button>
+                    <a href="@Url.Action("Index")" class="btn btn-secondary text-center">
+                        Hủy bỏ
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            // Khi chọn màu từ bảng màu (picker), cập nhật mã Hex vào ô Input text
+            $('#colorPicker').on('input', function () {
+                var color = $(this).val();
+                $('#hexInput').val(color.toUpperCase());
+            });
+
+            // Ngược lại, khi gõ mã Hex vào ô Input text, cập nhật màu cho ô Picker
+            $('#hexInput').on('input', function () {
+                var color = $(this).val();
+                // Kiểm tra xem mã hex có hợp lệ không (ví dụ: #FFFFFF hoặc #FFF)
+                if (/^#[0-9A-F]{6}$/i.test(color)) {
+                    $('#colorPicker').val(color);
+                }
+            });
+        });
+    </script>
+}

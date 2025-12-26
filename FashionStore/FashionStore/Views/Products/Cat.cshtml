@@ -1,0 +1,70 @@
+﻿@model IEnumerable<FashionStore.Models.CategoryGroup>
+
+@foreach (var group in Model)
+{
+    <li class="dropdown-submenu">
+        <a href="#">
+            @group.GroupName <i class="fa fa-angle-right float-right mt-1"></i>
+        </a>
+        <ul class="dropdown-child">
+            @foreach (var cat in group.Categories)
+            {
+                <li>
+                    <a href="@Url.Action("Index", "Products", new { catId = cat.CategoryId })">
+                        @cat.CatName
+                    </a>
+                </li>
+            }
+        </ul>
+    </li>
+}
+
+<style>
+    /* Mục cha cấp 1 (Nền đen như hình) */
+    .dropdown-submenu {
+        position: relative;
+        background: #111; /* Màu đen đồng bộ hình */
+        list-style: none;
+    }
+
+        /* Link cấp 1 */
+        .dropdown-submenu > a {
+            color: #fff !important;
+            padding: 12px 20px;
+            display: block;
+        }
+
+    /* 1. Mặc định ẨN menu cấp 2 */
+    .dropdown-child {
+        display: none;
+        position: absolute;
+        left: 100%; /* Sang phải */
+        top: 0;
+        width: 180px;
+        background: #fff; /* Nền trắng cho cấp 2 để dễ nhìn */
+        box-shadow: 4px 4px 10px rgba(0,0,0,0.1);
+        z-index: 99;
+        margin: 0;
+        padding: 5px 0;
+    }
+
+    /* 2. HOVER để HIỆN và NHÔ LÊN */
+    .dropdown-submenu:hover > .dropdown-child {
+        display: block;
+        transform: translateY(-5px); /* Nhô lên nhẹ */
+        transition: 0.3s;
+    }
+
+    /* Link của menu cấp 2 (chữ đen trên nền trắng) */
+    .dropdown-child li a {
+        color: #333 !important;
+        padding: 8px 20px;
+        display: block;
+        font-size: 14px;
+    }
+
+        .dropdown-child li a:hover {
+            background: #f8f9fa;
+            color: #e63333 !important; /* Đổi màu khi di chuột vào */
+        }
+</style>

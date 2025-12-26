@@ -1,0 +1,91 @@
+﻿@model FashionStore.Models.Category
+
+@{
+    ViewBag.Title = "Xóa Danh mục";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="page-header">
+    <h1 class="page-title" style="background: linear-gradient(135deg, var(--danger), #ff8080); -webkit-background-clip: text;">
+        Xác nhận xóa
+    </h1>
+    <p class="page-subtitle">Hành động này sẽ gỡ bỏ danh mục khỏi hệ thống vĩnh viễn.</p>
+</div>
+
+<div class="d-flex justify-content-center">
+    <div class="content-card col-12 col-lg-6 border-danger-subtle">
+        <div class="card-header" style="background: rgba(239, 68, 68, 0.05);">
+            <div class="card-title text-danger">
+                <i class="bi bi-exclamation-octagon-fill"></i> Cảnh báo quan trọng
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="alert-item mb-4" style="background: rgba(239, 68, 68, 0.1); border-color: var(--danger);">
+                <div class="alert-info">
+                    <div class="product-name" style="color: var(--danger);">Bạn có chắc chắn muốn xóa?</div>
+                    <div class="variant-info">
+                        Mọi liên kết với sản phẩm thuộc danh mục <strong>@Model.CatName</strong> có thể bị ảnh hưởng.
+                    </div>
+                </div>
+                <div class="stock-badge danger">
+                    <i class="bi bi-trash3"></i>
+                </div>
+            </div>
+
+            <div class="p-3 rounded mb-4" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color);">
+                <div class="row g-3">
+                    <div class="col-4 text-secondary">Tên danh mục:</div>
+                    <div class="col-8 fw-bold text-primary">@Model.CatName</div>
+
+                    <div class="col-4 text-secondary">Nhóm:</div>
+                    <div class="col-8 text-primary">@Model.CategoryGroup.GroupName</div>
+
+                    <div class="col-4 text-secondary">Đường dẫn:</div>
+                    <div class="col-8"><code style="color: var(--secondary-color)">/@Model.CatSlug</code></div>
+                </div>
+            </div>
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.CategoryId)
+
+                <div class="d-flex flex-column gap-2">
+                    <button type="submit" class="btn btn-primary" style="background: var(--danger); border: none;">
+                        <i class="bi bi-trash-fill"></i> Xác nhận xóa vĩnh viễn
+                    </button>
+                    <a href="@Url.Action("Index")" class="btn btn-secondary text-center">
+                        Hủy và quay lại danh sách
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Hiệu ứng rung nhẹ khi trang load để thu hút sự chú ý vào thẻ cảnh báo */
+    .border-danger-subtle {
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    }
+
+    @@keyframes shake {
+        10%, 90% {
+            transform: translate3d(-1px, 0, 0);
+        }
+
+        20%, 80% {
+            transform: translate3d(2px, 0, 0);
+        }
+
+        30%, 50%, 70% {
+            transform: translate3d(-3px, 0, 0);
+        }
+
+        40%, 60% {
+            transform: translate3d(3px, 0, 0);
+        }
+    }
+</style>

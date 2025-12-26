@@ -1,0 +1,123 @@
+﻿@model IEnumerable<FashionStore.Models.ProductVariant>
+@{
+    ViewBag.Title = "Quản lý biến thể";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var product = (FashionStore.Models.Product)ViewBag.Product;
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="page-title">Quản lý kho biến thể</h1>
+        <p class="page-subtitle">
+            Sản phẩm: <span class="text-primary fw-bold">@product.ProductName</span>
+            <span class="mx-2">|</span> SKU: <code class="text-secondary">@product.SKU</code>
+        </p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="@Url.Action("Index", "Product")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> SP Gốc
+        </a>
+        <a href="@Url.Action("Create", new { productId = product.ProductId })" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Thêm Size/Màu
+        </a>
+    </div>
+</div>
+
+<div class="stats-grid mb-4">
+    <div class="stat-card" style="padding: 15px 24px;">
+        <div class="stat-label">Giá niêm yết gốc</div>
+        <div class="stat-value" style="font-size: 20px;">@product.BasePrice.ToString("N0") đ</div>
+    </div>
+    <div class="stat-card" style="padding: 15px 24px;">
+        <div class="stat-label">Tổng số biến thể</div>
+        <div class="stat-value" style="font-size: 20px;">@Model.Count()</div>
+    </div>
+    <div class="stat-card" style="padding: 15px 24px;">
+        <div class="stat-label">Tổng tồn kho</div>
+        <div class="stat-value text-success" style="font-size: 20px;">@Model.Sum(x => x.Stock)</div>
+    </div>
+</div>
+
+<div class="content-card">
+    <div class="card-header">
+        <div class="card-title">
+            <i class="bi bi-layers-half"></i> Danh sách phân loại sản phẩm
+        </div>
+    </div>
+
+    <div class="card-body p-0">
+        <div class="table-wrapper">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th class="text-center">Kích cỡ (Size)</th>
+                        <th>Màu sắc</th>
+                        <th>Giá biến thể</th>
+                        <th>Tình trạng kho</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-center">
+                                    <span class="badge secondary" style="min-width: 40px; font-size: 13px;">
+                                        @item.Size.SizeCode
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="d-inline-block rounded-circle border border-white"
+                                              style="width: 18px; height: 18px; background-color: @item.Color.ColorHex; box-shadow: 0 0 5px rgba(0,0,0,0.2);">
+                                        </span>
+                                        <span style="color: var(--text-primary)">@item.Color.ColorName</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="fw-bold text-primary">@item.Price.ToString("N0") đ</span>
+                                </td>
+                                <td>
+                                    @if (item.Stock > 20)
+                                    {
+                                        <span class="badge success">Còn hàng (@item.Stock)</span>
+                                    }
+                                    else if (item.Stock > 0)
+                                    {
+                                        <span class="badge warning">Sắp hết (@item.Stock)</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge danger">Hết hàng</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        @using (Html.BeginForm("Delete", "ProductVariant", new { id = item.VariantId }, FormMethod.Post, new { onsubmit = "return confirm('Xác nhận xóa biến thể này?');" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn-action" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.2);">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="empty-state">
+                                <i class="bi bi-stack" style="font-size: 40px; opacity: 0.3;"></i>
+                                <p>Sản phẩm này chưa có biến thể nào được tạo.</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

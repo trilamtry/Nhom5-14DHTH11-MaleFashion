@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="f07d37f6bc874f55874a285a0258368a" Name="Diagram1" ZoomLevel="28">
+        <EntityTypeShape EntityType="ShopThoiTrangModel.AppUser" Width="1.5" PointX="8.25" PointY="10.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopThoiTrangModel.Blog" Width="1.5" PointX="0.75" PointY="7.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopThoiTrangModel.Cart" Width="1.5" PointX="10.5" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopThoiTrangModel.CartItem" Width="1.5" PointX="12.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopThoiTrangModel.Category" Width="1.5" PointX="3" PointY="3.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopThoiTrangModel.CategoryGroup" Width="1.5" PointX="0.75" PointY="3.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopThoiTrangModel.Color" Width="1.5" PointX="8.25" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopThoiTrangModel.ContactMessage" Width="1.5" PointX="2.75" PointY="7.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopThoiTrangModel.CustomerAddress" Width="1.5" PointX="10.5" PointY="14.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopThoiTrangModel.Order" Width="1.5" PointX="10.5" PointY="18" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopThoiTrangModel.OrderItem" Width="1.5" PointX="12.75" PointY="18.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopThoiTrangModel.Product" Width="1.5" PointX="5.25" PointY="3.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopThoiTrangModel.ProductImage" Width="1.5" PointX="7.5" PointY="3.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopThoiTrangModel.ProductReview" Width="1.5" PointX="15" PointY="18.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopThoiTrangModel.ProductVariant" Width="1.5" PointX="10.5" PointY="3.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopThoiTrangModel.Role" Width="1.5" PointX="6" PointY="11.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopThoiTrangModel.Size" Width="1.5" PointX="8.25" PointY="7.25" IsExpanded="true" />
+        <AssociationConnector Association="ShopThoiTrangModel.FK_Cart_User" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopThoiTrangModel.FK_CustomerAddress_User" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopThoiTrangModel.FK_Order_User" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopThoiTrangModel.FK__CartItem__CartId__73BA3083" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopThoiTrangModel.FK__CartItem__Varian__74AE54BC" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopThoiTrangModel.FK__Product__Categor__5812160E" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopThoiTrangModel.FK_Category_Group" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopThoiTrangModel.FK_Variant_Color" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopThoiTrangModel.FK__OrderItem__Order__02084FDA" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopThoiTrangModel.FK_Review_OrderItem" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopThoiTrangModel.FK_ProductImage_Product" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopThoiTrangModel.FK_Variant_Product" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopThoiTrangModel.FK_Variant_Size" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopThoiTrangModel.UserRole" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

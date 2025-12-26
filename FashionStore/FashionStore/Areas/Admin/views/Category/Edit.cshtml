@@ -1,0 +1,99 @@
+﻿@model FashionStore.Models.Category
+
+@{
+    ViewBag.Title = "Sửa Danh mục";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="page-header">
+    <h1 class="page-title">Chỉnh sửa Danh mục</h1>
+    <p class="page-subtitle">Cập nhật thông tin phân loại cho hệ thống cửa hàng.</p>
+</div>
+
+<div class="d-flex justify-content-center">
+    <div class="content-card col-12 col-lg-7">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="bi bi-pencil-square"></i> Chi tiết danh mục: <span class="text-primary">@Model.CatName</span>
+            </div>
+        </div>
+
+        <div class="card-body">
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.CategoryId)
+
+                <div class="row">
+                    <div class="col-12 mb-4">
+                        <label class="form-label">Thuộc Nhóm</label>
+                        @Html.DropDownList("GroupId", null, htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.GroupId, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">Tên Danh mục</label>
+                        @Html.EditorFor(model => model.CatName, new { htmlAttributes = new { @class = "form-control", placeholder = "VD: Áo khoác Nam" } })
+                        @Html.ValidationMessageFor(model => model.CatName, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">Slug (URL)</label>
+                        @Html.EditorFor(model => model.CatSlug, new { htmlAttributes = new { @class = "form-control", placeholder = "VD: ao-khoak-nam" } })
+                        @Html.ValidationMessageFor(model => model.CatSlug, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">Thứ tự hiển thị</label>
+                        @Html.EditorFor(model => model.SortOrder, new { htmlAttributes = new { @class = "form-control", type = "number" } })
+                        @Html.ValidationMessageFor(model => model.SortOrder, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">Trạng thái hệ thống</label>
+                        <div class="form-control d-flex align-items-center" style="background: rgba(255,255,255,0.02); border-style: dashed;">
+                            <div class="form-check form-switch mb-0">
+                                <input type="checkbox"
+                                       name="IsActive"
+                                       id="flexSwitchCheckDefault"
+                                       class="form-check-input"
+                                       role="switch"
+                                       @(Model.IsActive == true ? "checked" : "") />
+                                <label class="form-check-label ms-2" for="flexSwitchCheckDefault">Cho phép hiển thị</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4" style="border-color: var(--border-color);">
+
+                <div class="d-flex justify-content-end gap-3">
+                    <a href="@Url.Action("Index")" class="btn btn-secondary">
+                        <i class="bi bi-x-lg"></i> Hủy bỏ
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i> Lưu thay đổi
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        // Tự động tạo Slug khi nhập tên danh mục (Optionally)
+        $(document).ready(function () {
+            $("#CatName").keyup(function () {
+                var str = $(this).val();
+                str = str.toLowerCase()
+                         .normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+                         .replace(/[^\w\s-]/g, '')
+                         .replace(/[\s_-]+/g, '-')
+                         .replace(/^-+|-+$/g, '');
+                $("#CatSlug").val(str);
+            });
+        });
+    </script>
+}

@@ -1,0 +1,64 @@
+﻿@model FashionStore.Models.ProductReview
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<style>
+    .form-select:focus, .form-control:focus {
+        border-color: #ca1515;
+        box-shadow: 0 0 0 0.25rem rgba(202, 21, 21, 0.25);
+    }
+
+    .card {
+        border-radius: 15px;
+    }
+</style>
+
+
+<div class="container spad">
+    <div class="row d-flex justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-5">
+                    <h3 class="fw-bold text-center mb-4 text-uppercase">Đánh giá sản phẩm</h3>
+                    <hr />
+
+                    @using (Html.BeginForm("Create", "ProductReviews", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.OrderItemId)
+                        @Html.HiddenFor(m => m.ReviewCode)
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold"><i class="fa fa-star text-warning"></i> Bạn hài lòng với sản phẩm chứ?</label>
+                            <select name="Rating" class="form-select border-2" required style="height: 50px;">
+                                <option value="5">⭐⭐⭐⭐⭐ - Rất hài lòng</option>
+                                <option value="4">⭐⭐⭐⭐ - Hài lòng</option>
+                                <option value="3">⭐⭐⭐ - Bình thường</option>
+                                <option value="2">⭐⭐ - Không hài lòng</option>
+                                <option value="1">⭐ - Rất tệ</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold"><i class="fa fa-pencil"></i> Nhận xét chi tiết</label>
+                            <textarea name="Comment" class="form-control border-2" rows="5"
+                                      placeholder="Sản phẩm vải đẹp, giao hàng nhanh..." required></textarea>
+                            <div class="form-text mt-2 text-muted">
+                                Chia sẻ trải nghiệm của bạn sẽ giúp khách hàng khác mua sắm tốt hơn.
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="javascript:history.back()" class="btn btn-light px-4 me-md-2">Quay lại</a>
+                            <button type="submit" class="btn btn-danger px-5 py-2 fw-bold">
+                                <i class="fa fa-paper-plane"></i> GỬI ĐÁNH GIÁ
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

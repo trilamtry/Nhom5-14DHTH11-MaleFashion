@@ -1,0 +1,131 @@
+﻿@model IEnumerable<FashionStore.Models.AppUser>
+@{
+    ViewBag.Title = "Quản lý Khách hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="page-header">
+    <h1 class="page-title">Quản lý Khách hàng</h1>
+    <p class="page-subtitle">Xem danh sách, tìm kiếm và quản lý trạng thái tài khoản người dùng.</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-icon primary">
+                <i class="bi bi-people-fill"></i>
+            </div>
+        </div>
+        <div class="stat-value">@Model.Count()</div>
+        <div class="stat-label">Tổng khách hàng</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-icon success">
+                <i class="bi bi-person-check-fill"></i>
+            </div>
+        </div>
+        <div class="stat-value">@Model.Count(u => u.IsActive)</div>
+        <div class="stat-label">Đang hoạt động</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-icon danger">
+                <i class="bi bi-person-x-fill"></i>
+            </div>
+        </div>
+        <div class="stat-value">@Model.Count(u => !u.IsActive)</div>
+        <div class="stat-label">Đã khóa</div>
+    </div>
+</div>
+
+<div class="content-card">
+    <div class="card-header">
+        <div class="card-title">
+            <i class="bi bi-table"></i> Danh sách tài khoản
+        </div>
+
+        @using (Html.BeginForm("Index", "AppUser", FormMethod.Get, new { @class = "d-flex gap-2" }))
+        {
+            <input type="text" name="search" class="form-control" style="max-width: 250px;" placeholder="Tìm Email, SĐT..." />
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search"></i>
+            </button>
+        }
+    </div>
+
+    <div class="card-body">
+        <div class="table-wrapper">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Họ tên</th>
+                        <th>Email</th>
+                        <th>Số điện thoại</th>
+                        <th>Ngày tham gia</th>
+                        <th>Trạng thái</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <p>Không tìm thấy khách hàng nào.</p>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="fw-bold" style="color: var(--text-primary)">@item.FullName</span>
+                                </td>
+                                <td>@item.Email</td>
+                                <td>@(string.IsNullOrEmpty(item.Phone) ? "---" : item.Phone)</td>
+                                <td>@item.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge success">Hoạt động</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge danger">Đã khóa</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a href="@Url.Action("Details", new { id = item.UserId })" class="btn-action" title="Xem chi tiết">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+
+                                        @using (Html.BeginForm("ToggleStatus", "AppUser", new { id = item.UserId }, FormMethod.Post, new { onsubmit = "return confirm('Xác nhận thay đổi trạng thái tài khoản này?');", @style = "display:inline;" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            if (item.IsActive)
+                                            {
+                                                <button type="submit" class="btn-action" style="color: var(--warning); border-color: var(--warning);" title="Khóa tài khoản">
+                                                    <i class="bi bi-lock"></i>
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button type="submit" class="btn-action" style="color: var(--success); border-color: var(--success);" title="Mở khóa">
+                                                    <i class="bi bi-unlock"></i>
+                                                </button>
+                                            }
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

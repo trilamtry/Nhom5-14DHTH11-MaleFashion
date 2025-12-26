@@ -1,0 +1,232 @@
+﻿@{
+    var user = (FashionStore.Models.AppUser)Session["user"];
+    FashionStore.Models.ShopThoiTrangEntities db = new FashionStore.Models.ShopThoiTrangEntities();
+
+    int countCart = 0;
+    decimal totalCartPrice = 0;
+
+    if (user != null)
+    {
+        // 1. Tìm giỏ hàng của user này
+        var cart = db.Carts.FirstOrDefault(c => c.UserId == user.UserId);
+        if (cart != null)
+        {
+            // 2. Đếm tổng số lượng (Quantity) của tất cả mặt hàng trong giỏ
+            countCart = db.CartItems.Where(ci => ci.CartId == cart.CartId).Sum(ci => (int?)ci.Quantity) ?? 0;
+
+            // 3. Tính tổng tiền
+            totalCartPrice = db.CartItems
+                               .Where(ci => ci.CartId == cart.CartId)
+                               .Select(ci => (ci.Quantity ?? 0) * ci.UnitPrice)
+                               .DefaultIfEmpty(0)
+                               .Sum();
+        }
+    }
+}
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Male_Fashion Template">
+    <meta name="keywords" content="Male_Fashion, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>@ViewBag.Title-MaleFashion</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
+          rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="~/assets/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="~/assets/css/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="~/assets/css/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="~/assets/css/nice-select.css" type="text/css">
+    <link rel="stylesheet" href="~/assets/css/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="~/assets/css/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="~/assets/css/style.css" type="text/css">
+</head>
+
+<body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+    <!-- Offcanvas Menu Begin -->
+    <div class="offcanvas-menu-overlay"></div>
+    <div class="offcanvas-menu-wrapper">
+        <div class="offcanvas__option">
+            <div class="offcanvas__links">
+                <a href="@Url.Action("Login","AppUsers")">Sign in</a>              
+            </div>
+        </div>
+        <div class="offcanvas__nav__option">
+            <a href="#" class="search-switch"><img src="~/assets/img/icon/search.png" alt=""></a>
+            <a href="#"><img src="~/assets/img/icon/heart.png" alt=""></a>
+            <a href="@Url.Action("Index","CartItems")"><img src="~/assets/img/icon/cart.png" alt=""> <span>!=@db.</span></a>
+            <div class="price">$0.00</div>
+        </div>
+        <div id="mobile-menu-wrap"></div>
+        <div class="offcanvas__text">
+            <p>Free shipping, 30-day return or refund guarantee.</p>
+        </div>
+    </div>
+    <!-- Offcanvas Menu End -->
+    <!-- Header Section Begin -->
+    <header class="header">
+        <div class="header__top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-md-7">
+                        <div class="header__top__left">
+                            <p>Free shipping, 30-day return or refund guarantee.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-5">
+                        <div class="header__top__right">
+                            <div class="header__top__links">
+                                @if (user == null)
+                                {
+                                    <a href="@Url.Action("Login", "AppUsers")">Sign in</a>
+
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Logout", "AppUsers")">Log out</a>
+                                    <a href="@Url.Action("Index","OrderItems")">HISTORY</a>
+                                }
+                            </div>                          
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-3">
+                    <div class="header__logo">
+                        <a href="@Url.Action("Index", "Products")"><img src="~/assets/img/logo.png" alt="" style="object-fit: contain;"></a>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <nav class="header__menu mobile-menu">
+                        <ul>
+                            <li>
+                                <a href="@Url.Action("Index", "Products")">Shop</a>
+                                <ul class="dropdown">
+                                    @Html.Action("Cat", "Products")
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#">Pages</a>
+                                <ul class="dropdown">
+                                    <li><a href="@Url.Action("Index","CartItems")">Shopping Cart</a></li>
+                                    <li><a href="@Url.Action("Checkout","OrderItems")">Check Out</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="@Url.Action("Index","Blogs")">Blog</a></li>
+                            <li><a href="@Url.Action("Contact","Blogs")">Contacts</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-lg-3 col-md-3">
+                    <div class="header__nav__option">
+                        <a href="#"><img src="~/assets/img/icon/heart.png" alt=""></a>
+                        <a href="@Url.Action("Index","CartItems")"><img src="~/assets/img/icon/cart.png" alt=""> <span>@countCart</span></a>
+                        <div class="price">@totalCartPrice.ToString("N0")đ</div>
+                    </div>
+                </div>
+            </div>
+            <div class="canvas__open"><i class="fa fa-bars"></i></div>
+        </div>
+    </header>
+    <!-- Header Section End -->
+
+    @RenderBody()
+
+    <!-- Footer Section Begin -->
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="footer__about">
+                    <div class="footer__logo">
+                        <a href="#"><img src="img/footer-logo.png" alt="" /></a>
+                    </div>
+                    <p>
+                        Khách hàng là trọng tâm của mô hình kinh doanh độc đáo của chúng
+                        tôi, bao gồm cả thiết kế.
+                    </p>
+                    <a href="#"><img src="img/payment.png" alt="" /></a>
+                </div>
+            </div>
+            <div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
+                <div class="footer__widget">
+                    <h6>Mua Sắm</h6>
+                    <ul>
+                        <li><a href="#">Cửa hàng</a></li>
+                        <li><a href="#">Xu hướng</a></li>
+                        <li><a href="#">Phụ kiện</a></li>
+                        <li><a href="#">Sale</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-6">
+                <div class="footer__widget">
+                    <h6>Shopping</h6>
+                    <ul>
+                        <li><a href="#">Liên hệ</a></li>
+                        <li><a href="#">Phương thức thanh toán</a></li>
+                        <li><a href="#">Giao hàng</a></li>
+                        <li><a href="#">Trả lại & Trao đổi</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-3 offset-lg-1 col-md-6 col-sm-6">
+                <div class="footer__widget">
+                    <h6>Gửi ý kiến</h6>
+                    <div class="footer__newslatter">
+                        <p>
+                            Hãy là người đầu tiên biết về các sản phẩm mới, lookbook,
+                            chương trình giảm giá và khuyến mãi!
+                        </p>
+                        <form action="#">
+                            <input type="text" placeholder="Your email" />
+                            <button type="submit">
+                                <span class="icon_mail_alt"></span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>        
+    </div>
+</footer>
+    <!-- Footer Section End -->
+    <!-- Search Begin -->
+    <div class="search-model">
+        <div class="h-100 d-flex align-items-center justify-content-center">
+            <div class="search-close-switch">+</div>
+            <form class="search-model-form">
+                <input type="text" id="search-input" placeholder="Search here.....">
+            </form>
+        </div>
+    </div>
+    <!-- Search End -->
+    <!-- Js Plugins -->
+    <script src="~/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="~/assets/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/jquery.nice-select.min.js"></script>
+    <script src="~/assets/js/jquery.nicescroll.min.js"></script>
+    <script src="~/assets/js/jquery.magnific-popup.min.js"></script>
+    <script src="~/assets/js/jquery.countdown.min.js"></script>
+    <script src="~/assets/js/jquery.slicknav.js"></script>
+    <script src="~/assets/js/mixitup.min.js"></script>
+    <script src="~/assets/js/owl.carousel.min.js"></script>
+    <script src="~/assets/js/main.js"></script>
+</body>
+@RenderSection("scripts", required: false)
+</html>
+

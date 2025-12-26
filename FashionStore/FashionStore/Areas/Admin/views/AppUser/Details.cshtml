@@ -1,0 +1,154 @@
+﻿@model FashionStore.Models.AppUser
+@{
+    ViewBag.Title = "Thông tin khách hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var cultureInfo = new System.Globalization.CultureInfo("vi-VN");
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="page-title">Hồ sơ khách hàng</h1>
+        <p class="page-subtitle">Chi tiết thông tin cá nhân và lịch sử giao dịch của người dùng.</p>
+    </div>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Quay lại
+    </a>
+</div>
+
+<div class="content-grid" style="grid-template-columns: 350px 1fr;">
+    <div class="d-flex flex-column gap-4">
+        <div class="content-card">
+            <div class="card-header">
+                <div class="card-title"><i class="bi bi-person-badge"></i> Cá nhân</div>
+            </div>
+            <div class="card-body text-center">
+                <div class="mb-3 d-flex justify-content-center">
+                    <div class="user-avatar" style="width: 70px; height: 70px; font-size: 28px;">
+                        @Model.FullName.Substring(0, 1).ToUpper()
+                    </div>
+                </div>
+                <h4 class="fw-bold mb-1" style="color: var(--text-primary)">@Model.FullName</h4>
+                <p class="text-secondary mb-4">@Model.Email</p>
+
+                <div class="text-start d-flex flex-column gap-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="stat-icon primary" style="width: 35px; height: 35px; font-size: 16px;">
+                            <i class="bi bi-telephone"></i>
+                        </span>
+                        <div>
+                            <div class="variant-info">Số điện thoại</div>
+                            <div class="fw-bold">@(string.IsNullOrEmpty(Model.Phone) ? "Chưa cập nhật" : Model.Phone)</div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="stat-icon warning" style="width: 35px; height: 35px; font-size: 16px;">
+                            <i class="bi bi-calendar-event"></i>
+                        </span>
+                        <div>
+                            <div class="variant-info">Ngày tham gia</div>
+                            <div class="fw-bold">@Model.CreatedAt.ToString("dd/MM/yyyy")</div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="stat-icon @(Model.IsActive ? "success" : "danger")" style="width: 35px; height: 35px; font-size: 16px;">
+                            <i class="bi bi-shield-check"></i>
+                        </span>
+                        <div>
+                            <div class="variant-info">Trạng thái</div>
+                            <span class="badge @(Model.IsActive ? "success" : "danger")">
+                                @(Model.IsActive ? "Hoạt động" : "Đã khóa")
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.CustomerAddresses != null && Model.CustomerAddresses.Any())
+        {
+            <div class="content-card">
+                <div class="card-header">
+                    <div class="card-title"><i class="bi bi-geo-alt"></i> Sổ địa chỉ</div>
+                </div>
+                <div class="card-body">
+                    <div class="alert-list">
+                        @foreach (var addr in Model.CustomerAddresses)
+                        {
+                            <div class="p-3 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color)">
+                                <div class="product-name" style="font-size: 14px;">@addr.Line1</div>
+                                <div class="variant-info">@addr.Ward, @addr.District, @addr.Province</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="content-card">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="bi bi-clock-history"></i> Lịch sử đơn hàng
+                <span class="badge info ms-2">@Model.Orders.Count</span>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-wrapper">
+                <table class="modern-table">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Ngày đặt</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                            <th class="text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Orders != null && Model.Orders.Any())
+                        {
+                            foreach (var order in Model.Orders.OrderByDescending(o => o.CreatedAt))
+                            {
+                                <tr>
+                                    <td><span class="order-code">@order.OrderCode</span></td>
+                                    <td>@order.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                    <td class="fw-bold" style="color: var(--text-primary)">
+                                        @order.TotalAmount.ToString("N0", cultureInfo) đ
+                                    </td>
+                                    <td>
+                                        @switch (order.Status)
+                                        {
+                                            case "PENDING":<span class="badge warning">Chờ xử lý</span>; break;
+                                            case "SHIPPING": <span class="badge info">Đang giao</span>; break;
+                                            case "COMPLETED": <span class="badge success">Hoàn thành</span>; break;
+                                            case "CANCELLED": <span class="badge danger">Đã hủy</span>; break;
+                                            default: <span class="badge secondary">@order.Status</span>; break;
+                                    }
+                                    </td>
+                                    <td>
+                                        <div class="d-flex justify-content-center">
+                                            <a href="@Url.Action("Details", "Order", new { id = order.OrderId })" class="btn-action" title="Xem chi tiết đơn hàng">
+                                                <i class="bi bi-arrow-right-short" style="font-size: 20px;"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="empty-state">
+                                    <svg width="48" height="48" viewBox="0 0 24 24"><path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,19H5V5H19V19Z" /></svg>
+                                    <p>Khách hàng này chưa có giao dịch nào.</p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

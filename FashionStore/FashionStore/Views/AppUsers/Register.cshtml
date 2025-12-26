@@ -1,0 +1,172 @@
+﻿@model FashionStore.Models.AppUser
+
+@{
+    ViewBag.Title = "Đăng ký tài khoản";
+}
+
+<style>
+    /* Nền nhẹ đồng bộ với trang Login và Male Fashion */
+    .auth-section {
+        background: #f3f2ee;
+        padding: 60px 0;
+    }
+
+    .auth-card {
+        border: none;
+        border-radius: 0; /* Vuông góc theo style template */
+        box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+    }
+
+    .auth-header {
+        background: #111111; /* Đen đặc trưng */
+        color: #fff;
+        padding: 25px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    /* Input style vuông vức */
+    .form-control {
+        height: 45px;
+        border: 1px solid #e1e1e1;
+        border-radius: 0;
+        font-size: 14px;
+        padding-left: 15px;
+    }
+
+        .form-control:focus {
+            border-color: #111111;
+            box-shadow: none;
+        }
+
+    .input-group-text {
+        background: #fff;
+        border: 1px solid #e1e1e1;
+        border-right: none;
+        border-radius: 0;
+        color: #b7b7b7;
+        width: 45px;
+        justify-content: center;
+    }
+
+    /* Nút bấm Đen -> Đỏ */
+    .btn-register {
+        background: #111111;
+        color: #ffffff;
+        border: none;
+        border-radius: 0;
+        padding: 12px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        transition: all 0.3s;
+    }
+
+        .btn-register:hover {
+            background: #ff0000;
+            color: #fff;
+        }
+
+    .login-link {
+        color: #111111;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 12px;
+        text-decoration: none;
+        border-bottom: 2px solid #ff0000;
+    }
+
+    .form-label {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
+    }
+</style>
+
+<section class="auth-section mt-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="card auth-card">
+
+                    <div class="auth-header text-center">
+                        <h4 class="text-white m-0">Create Account</h4>
+                    </div>
+
+                    <div class="card-body p-4 p-md-5">
+                        @using (Html.BeginForm())
+                        {
+                            @Html.AntiForgeryToken()
+
+                            if (!ViewData.ModelState.IsValid)
+                            {
+                                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger py-2 small border-0 mb-4", style = "border-radius:0;" })
+                            }
+
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label fw-bold">Họ và tên</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fa fa-user-o"></i></span>
+                                        @Html.EditorFor(m => m.FullName, new { htmlAttributes = new { @class = "form-control", placeholder = "VD: Nguyễn Văn A" } })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger small" })
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label fw-bold">Email Address</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fa fa-envelope-o"></i></span>
+                                        @Html.EditorFor(m => m.Email, new { htmlAttributes = new { @class = "form-control", placeholder = "email@example.com" } })
+                                    </div>
+                                    <span class="text-danger small">@ViewBag.ThongBaoEmail</span>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label fw-bold">Số điện thoại</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                                        @Html.EditorFor(m => m.Phone, new { htmlAttributes = new { @class = "form-control", placeholder = "0123xxxxxx" } })
+                                    </div>
+                                    <span class="text-danger small">@ViewBag.ThongBaoPhone</span>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Mật khẩu</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                                        @Html.EditorFor(m => m.PasswordHash, new { htmlAttributes = new { @class = "form-control", placeholder = "••••••••", type = "password" } })
+                                    </div>
+                                    <span class="text-danger small">@ViewBag.ThongBaoPassword</span>
+                                </div>
+
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label fw-bold">Nhập lại</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fa fa-check-square-o"></i></span>
+                                        <input type="password" name="ConfirmPassword" class="form-control" placeholder="••••••••" />
+                                    </div>
+                                    <span class="text-danger small">@ViewBag.ThongBaoConfirm</span>
+                                </div>
+                            </div>
+
+                            <div class="d-grid mb-4">
+                                <button type="submit" class="btn btn-register">
+                                    Đăng ký thành viên
+                                </button>
+                            </div>
+
+                            <div class="text-center">
+                                <p class="text-muted small mb-2">Bạn đã có tài khoản?</p>
+                                <a href="@Url.Action("Login","AppUsers")" class="login-link">
+                                    Đăng nhập ngay
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

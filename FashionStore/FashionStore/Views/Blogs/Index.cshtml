@@ -1,0 +1,65 @@
+﻿@model IEnumerable<FashionStore.Models.Blog>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    /* Khoảng cách cho phần sản phẩm liên quan */
+    .product__item__text {
+        padding: 20px 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important; /* Tạo khoảng cách đều giữa các phần tử */
+    }
+
+    /* Đưa nút Add to cart lên trên và đẩy tên xuống */
+    .add-cart {
+        order: 1 !important;
+        margin-bottom: 10px !important;
+        font-weight: bold;
+        color: #e53637 !important; /* Màu đỏ của template */
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .product__item__text h6 {
+        order: 2 !important;
+        margin: 0 !important;
+    }
+
+    .product__item__text h5 {
+        order: 3 !important;
+        font-weight: 700;
+    }
+</style>
+
+<section class="blog spad">
+    <div class="container">
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-lg-4 col-md-6 col-sm-6">
+                    <div class="blog__item">
+                        <div class="blog__item__pic"
+                             style="background-image: url('/assets/img/blog/@item.ImageThumb');
+                                background-size: cover;
+                                background-position: center;
+                                background-repeat: no-repeat;
+                                height: 270px;
+                                width: 100%;
+                                display: block;">
+                        </div>
+                        <div class="blog__item__text">
+                            <span>
+                                <img src="~/assets/img/icon/calendar.png">
+                                @(item.CreatedAt.HasValue ? item.CreatedAt.Value.ToString("dd MMMM yyyy") : "")
+                            </span>
+                            <h5>@item.Title</h5>
+                            <p>@item.ShortDescription</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

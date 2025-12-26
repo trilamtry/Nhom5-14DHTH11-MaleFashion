@@ -1,0 +1,112 @@
+﻿@model FashionStore.Models.ProductReviewViewModel
+
+@{
+    ViewBag.Title = "Chi tiết Đánh giá";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="page-title">Chi tiết đánh giá #@Model.ReviewCode</h1>
+        <p class="page-subtitle">Xem nội dung phản hồi và gửi thư cảm ơn hoặc giải đáp thắc mắc cho khách hàng.</p>
+    </div>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Quay lại
+    </a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert-item mb-4" style="background: rgba(16, 185, 129, 0.1); border-color: var(--success); color: var(--success);">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert-item mb-4" style="background: rgba(239, 68, 68, 0.1); border-color: var(--danger); color: var(--danger);">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+    </div>
+}
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="content-card">
+            <div class="card-header">
+                <div class="card-title"><i class="bi bi-info-circle"></i> Thông tin đối tượng</div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-column gap-3">
+                    <div class="d-flex align-items-center gap-3 p-2 rounded" style="background: rgba(255,255,255,0.02);">
+                        <div class="user-avatar" style="width: 45px; height: 45px; font-size: 18px;">
+                            @Model.CustomerName.Substring(0, 1).ToUpper()
+                        </div>
+                        <div>
+                            <div class="variant-info">Khách hàng</div>
+                            <div class="fw-bold text-primary">@Model.CustomerName</div>
+                            <div class="small text-secondary">@Model.CustomerEmail</div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 rounded border" style="border-color: var(--border-color) !important;">
+                        <div class="variant-info">Sản phẩm đánh giá</div>
+                        <div class="fw-bold mb-1">@Model.ProductName</div>
+                        <span class="badge secondary">@Model.SizeName | @Model.ColorName</span>
+                        <div class="mt-2 pt-2 border-top" style="border-color: var(--border-color) !important;">
+                            <span class="variant-info">Thuộc đơn hàng:</span>
+                            <span class="order-code ms-1">#@Model.OrderCode</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="variant-info mb-2">Nội dung khách hàng gửi:</div>
+                        <div class="p-3 rounded italic" style="background: rgba(99, 102, 241, 0.05); border-left: 4px solid var(--primary-color); font-style: italic; color: var(--text-primary);">
+                            "@(string.IsNullOrEmpty(Model.Comment) ? "Khách hàng không để lại bình luận." : Model.Comment)"
+                        </div>
+                        <div class="text-end mt-2">
+                            <small class="variant-info"><i class="bi bi-clock me-1"></i> @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="content-card h-100">
+            <div class="card-header" style="background: rgba(99, 102, 241, 0.05);">
+                <div class="card-title text-primary"><i class="bi bi-envelope-paper-heart"></i> Gửi phản hồi Email</div>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm("SendEmail", "ProductReview", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="reviewId" value="@Model.ReviewId" />
+                    <input type="hidden" name="emailTo" value="@Model.CustomerEmail" />
+
+                    <div class="form-group mb-4">
+                        <label class="form-label">Tiêu đề Email</label>
+                        <input type="text" name="emailSubject" class="form-control"
+                               value="Cảm ơn bạn đã đánh giá sản phẩm tại Fashion Store" required />
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label class="form-label">Nội dung thư phản hồi</label>
+                        <textarea name="emailBody" class="form-control" rows="10" required
+                                  placeholder="Nhập nội dung phản hồi...">Chào @Model.CustomerName,&#13;&#10;&#13;&#10;Fashion Store chân thành cảm ơn bạn đã dành thời gian đánh giá sản phẩm @Model.ProductName.&#13;&#10;&#13;&#10;[Lời cảm ơn/Giải đáp của bạn]&#13;&#10;&#13;&#10;Trân trọng,&#13;&#10;Ban quản trị Fashion Store.</textarea>
+                    </div>
+
+                    <div class="form-control mb-4" style="background: transparent; border-style: dashed;">
+                        <div class="form-check form-switch mb-0">
+                            <input type="checkbox" name="sendCopy" class="form-check-input" id="sendCopy" value="true" role="switch">
+                            <label class="form-check-label ms-2" for="sendCopy">Gửi một bản sao đến Email quản trị hệ thống</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-3 shadow-lg">
+                        <i class="bi bi-send-fill me-2"></i> Gửi phản hồi ngay
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,134 @@
+﻿@model FashionStore.Areas.Admin.Models.ProductVariantViewModel
+@{
+    ViewBag.Title = "Thêm biến thể";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    /* CSS tùy chỉnh cho Radio Buttons kiểu Tiles */
+    .variant-selector {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+        .variant-selector input[type="radio"] {
+            display: none;
+        }
+
+    .variant-label {
+        padding: 8px 16px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: rgba(255,255,255,0.02);
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+    }
+
+    .variant-selector input[type="radio"]:checked + .variant-label {
+        border-color: var(--primary-color);
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--primary-color);
+        box-shadow: 0 0 0 1px var(--primary-color);
+    }
+
+    .color-circle {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+</style>
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="page-title">Thêm biến thể mới</h1>
+        <p class="page-subtitle">Chọn Size và Màu sắc trực quan cho sản phẩm.</p>
+    </div>
+    <a href="@Url.Action("Index", new { productId = Model.ProductId })" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Quay lại
+    </a>
+</div>
+
+<div class="d-flex justify-content-center">
+    <div class="content-card col-12 col-md-10 col-lg-8">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="bi bi-plus-circle"></i> Biến thể cho: <span class="text-primary">@Model.ProductName</span>
+            </div>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.ProductId)
+                @Html.HiddenFor(m => m.ProductName)
+
+                <div class="form-group mb-4">
+                    <label class="form-label d-block mb-3">Chọn Kích cỡ (Size)</label>
+                    <div class="variant-selector">
+                        @foreach (var size in (SelectList)ViewBag.SizeId)
+                        {
+                            // Thêm thuộc tính required vào đây
+                            <input type="radio" name="SizeId" id="size_@size.Value" value="@size.Value"
+                                   @(Model.SizeId.ToString() == size.Value ? "checked" : "") required />
+                            <label for="size_@size.Value" class="variant-label">
+                                @size.Text
+                            </label>
+                        }
+                    </div>
+                    @Html.ValidationMessageFor(m => m.SizeId, "", new { @class = "text-danger small mt-2 d-block" })
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="form-label d-block mb-3">Chọn Màu sắc</label>
+                    <div class="variant-selector">
+                        @if (ViewBag.ColorsList != null)
+                        {
+                            foreach (var color in (IEnumerable<FashionStore.Models.Color>)ViewBag.ColorsList)
+                            {
+                                @* Thuộc tính name PHẢI LÀ "ColorId" *@
+                                <input type="radio"
+                                       name="ColorId"
+                                       id="color_@color.ColorId"
+                                       value="@color.ColorId"
+                                       @(Model.ColorId == color.ColorId ? "checked" : "")
+                                       required />
+
+                                <label for="color_@color.ColorId" class="variant-label">
+                                    <span class="color-circle" style="background-color: @color.ColorHex;"></span>
+                                    @color.ColorName
+                                </label>
+                            }
+                        }
+                    </div>
+                    @Html.ValidationMessageFor(m => m.ColorId, "", new { @class = "text-danger small mt-2 d-block" })
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6 form-group">
+                        <label class="form-label">Giá bán riêng (VNĐ)</label>
+                        @Html.TextBoxFor(m => m.Price, new { @class = "form-control", type = "number", placeholder = "Để trống nếu dùng giá gốc" })
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label class="form-label">Số lượng tồn kho</label>
+                        @Html.TextBoxFor(m => m.Stock, new { @class = "form-control", type = "number", placeholder = "0" })
+                    </div>
+                </div>
+
+                <hr class="my-4" style="border-color: var(--border-color);">
+
+                <div class="d-flex flex-column gap-2">
+                    <button type="submit" class="btn btn-primary py-3">
+                        <i class="bi bi-save2"></i> Lưu Biến Thể
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

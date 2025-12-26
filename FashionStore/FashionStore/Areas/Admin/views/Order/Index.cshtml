@@ -1,0 +1,109 @@
+﻿@model IEnumerable<FashionStore.Models.Order>
+@{
+    ViewBag.Title = "Quản lý Đơn hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var cultureInfo = new System.Globalization.CultureInfo("vi-VN");
+    string currentStatus = Request.QueryString["status"] ?? "";
+}
+
+<div class="page-header">
+    <h1 class="page-title">Quản lý Đơn hàng</h1>
+    <p class="page-subtitle">Theo dõi, xử lý và cập nhật trạng thái đơn hàng của khách hàng.</p>
+</div>
+
+<div class="table-container mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div class="nav-menu d-flex p-1 gap-1" style="background: rgba(255,255,255,0.05); border-radius: 12px; width: fit-content;">
+            <a href="@Url.Action("Index")"
+               class="btn @(currentStatus == "" ? "btn-primary" : "btn-secondary") py-2 px-3" style="border:none">Tất cả</a>
+
+            <a href="@Url.Action("Index", new { status = "PENDING" })"
+               class="btn @(currentStatus == "PENDING" ? "btn-primary" : "btn-secondary") py-2 px-3" style="border:none">Chờ xử lý</a>
+
+            <a href="@Url.Action("Index", new { status = "SHIPPING" })"
+               class="btn @(currentStatus == "SHIPPING" ? "btn-primary" : "btn-secondary") py-2 px-3" style="border:none">Đang giao</a>
+
+            <a href="@Url.Action("Index", new { status = "COMPLETED" })"
+               class="btn @(currentStatus == "COMPLETED" ? "btn-primary" : "btn-secondary") py-2 px-3" style="border:none">Hoàn thành</a>
+
+            <a href="@Url.Action("Index", new { status = "CANCELLED" })"
+               class="btn @(currentStatus == "CANCELLED" ? "btn-primary" : "btn-secondary") py-2 px-3" style="border:none">Đã hủy</a>
+        </div>
+
+        <div class="d-flex gap-2">
+            <input type="text" class="form-control" placeholder="Tìm mã đơn, SĐT..." style="max-width: 200px;">
+            <button class="btn btn-primary"><i class="bi bi-search"></i></button>
+        </div>
+    </div>
+</div>
+
+<div class="content-card">
+    <div class="card-header">
+        <div class="card-title">
+            <i class="bi bi-cart-check"></i> Danh sách giao dịch
+        </div>
+        <div class="stat-footer info">Cập nhật lúc: @DateTime.Now.ToString("HH:mm")</div>
+    </div>
+
+    <div class="card-body p-0">
+        <div class="table-wrapper">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Mã Đơn</th>
+                        <th>Khách hàng</th>
+                        <th>Ngày đặt</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <i class="bi bi-inbox" style="font-size: 40px; opacity: 0.3;"></i>
+                                <p>Không tìm thấy đơn hàng nào.</p>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td><span class="order-code">@item.OrderCode</span></td>
+                                <td>
+                                    <div class="fw-bold" style="color: var(--text-primary)">@item.CustomerName</div>
+                                    <div class="variant-info"><i class="bi bi-telephone small"></i> @item.Phone</div>
+                                </td>
+                                <td>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    <span class="fw-bold text-primary">@item.TotalAmount.ToString("N0", cultureInfo) đ</span>
+                                </td>
+                                <td>
+                                    @switch (item.Status)
+                                    {
+                                        case "PENDING":<span class="badge warning">Chờ xử lý</span>; break;
+                                        case "SHIPPING": <span class="badge info">Đang giao</span>; break;
+                                        case "COMPLETED": <span class="badge success">Hoàn thành</span>; break;
+                                        case "CANCELLED": <span class="badge danger">Đã hủy</span>; break;
+                                        default: <span class="badge secondary">@item.Status</span>; break;
+                                }
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center">
+                                        <a href="@Url.Action("Details", new { id = item.OrderId })" class="btn-action" title="Xem chi tiết & Xử lý">
+                                            <i class="bi bi-arrow-right-short" style="font-size: 20px;"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

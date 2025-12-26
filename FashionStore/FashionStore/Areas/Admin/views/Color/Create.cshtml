@@ -1,0 +1,84 @@
+﻿@model FashionStore.Models.Color
+
+@{
+    ViewBag.Title = "Thêm Màu sắc";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="page-header">
+    <h1 class="page-title">Thêm mới Màu sắc</h1>
+    <p class="page-subtitle">Định nghĩa các tùy chọn màu sắc mới cho bộ sưu tập thời trang.</p>
+</div>
+
+<div class="d-flex justify-content-center">
+    <div class="content-card col-12 col-md-6">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="bi bi-plus-circle"></i> Khởi tạo bảng màu
+            </div>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger small mb-3" })
+
+                <div class="form-group mb-4">
+                    <label class="form-label">Tên Màu</label>
+                    @Html.EditorFor(model => model.ColorName, new { htmlAttributes = new { @class = "form-control", placeholder = "Ví dụ: Hồng Phấn, Đen Nhám" } })
+                    @Html.ValidationMessageFor(model => model.ColorName, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="form-label">Chọn màu sắc (Mã Hex)</label>
+                    <div class="d-flex gap-3">
+                        <div class="flex-grow-1">
+                            @Html.EditorFor(model => model.ColorHex, new { htmlAttributes = new { @class = "form-control", id = "hexInput", placeholder = "#HEXCODE", Value = "#000000" } })
+                        </div>
+
+                        @* Công cụ chọn màu trực quan *@
+                        <div class="color-picker-wrapper">
+                            <input type="color" class="form-control-color" id="colorPicker"
+                                   value="#000000" title="Click để chọn màu"
+                                   style="width: 50px; height: 46px; padding: 4px; cursor: pointer; border-radius: 8px;">
+                        </div>
+                    </div>
+                    <small class="text-secondary mt-1 d-block">Mã Hex sẽ tự động cập nhật khi bạn chọn màu.</small>
+                    @Html.ValidationMessageFor(model => model.ColorHex, "", new { @class = "text-danger small" })
+                </div>
+
+                <hr class="my-4" style="border-color: var(--border-color);">
+
+                <div class="d-flex flex-column gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save-fill"></i> Lưu Màu sắc
+                    </button>
+                    <a href="@Url.Action("Index")" class="btn btn-secondary text-center">
+                        Hủy bỏ
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            // Đồng bộ từ Picker sang Input Text
+            $('#colorPicker').on('input', function () {
+                var color = $(this).val();
+                $('#hexInput').val(color.toUpperCase());
+            });
+
+            // Đồng bộ từ Input Text sang Picker (nếu người dùng gõ tay)
+            $('#hexInput').on('input', function () {
+                var color = $(this).val();
+                if (/^#[0-9A-F]{6}$/i.test(color)) {
+                    $('#colorPicker').val(color);
+                }
+            });
+        });
+    </script>
+}

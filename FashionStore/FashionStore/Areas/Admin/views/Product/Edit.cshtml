@@ -1,0 +1,141 @@
+﻿@model FashionStore.Areas.Admin.Models.ProductViewModel
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Title = "Chỉnh sửa Sản phẩm";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="page-title">Cấu hình Sản phẩm</h1>
+        <p class="page-subtitle">Cập nhật thông tin chi tiết, giá cả và hình ảnh đại diện.</p>
+    </div>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Quay lại danh sách
+    </a>
+</div>
+
+<div class="main-form">
+    @using (Html.BeginForm("Edit", "Product", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.ProductId)
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="content-card">
+                    <div class="card-header">
+                        <div class="card-title"><i class="bi bi-pencil-square"></i> Thông tin cơ bản</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group mb-4">
+                            <label class="form-label">Tên Sản phẩm</label>
+                            @Html.TextBoxFor(m => m.ProductName, new { @class = "form-control", placeholder = "Nhập tên sản phẩm...", id = "ProductName" })
+                            @Html.ValidationMessageFor(m => m.ProductName, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label">Mã SKU</label>
+                                @Html.TextBoxFor(m => m.SKU, new { @class = "form-control", placeholder = "Ví dụ: AO-SM-001" })
+                                @Html.ValidationMessageFor(m => m.SKU, "", new { @class = "text-danger small" })
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label">Giá niêm yết (VNĐ)</label>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.BasePrice, new { @class = "form-control", type = "number", placeholder = "0" })
+                                    <span class="input-group-text">đ</span>
+                                </div>
+                                @Html.ValidationMessageFor(m => m.BasePrice, "", new { @class = "text-danger small" })
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="form-label">Đường dẫn thân thiện (Slug)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted">/san-pham/</span>
+                                @Html.TextBoxFor(m => m.Slug, new { @class = "form-control", id = "ProductSlug" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Mô tả sản phẩm</label>
+                            @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = "6", placeholder = "Nhập mô tả chi tiết sản phẩm..." })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 d-flex flex-column gap-4">
+                <div class="content-card">
+                    <div class="card-header">
+                        <div class="card-title"><i class="bi bi-gear"></i> Phân loại & Hiển thị</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group mb-4">
+                            <label class="form-label">Danh mục sản phẩm</label>
+                            @Html.DropDownListFor(m => m.CategoryId, (SelectList)ViewBag.Categories, "-- Chọn danh mục --", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.CategoryId, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="form-group mb-2">
+                            <label class="form-label">Trạng thái kinh doanh</label>
+                            <div class="form-control d-flex align-items-center" style="background: rgba(255,255,255,0.02); border-style: dashed;">
+                                <div class="form-check form-switch mb-0">
+                                    @Html.CheckBoxFor(m => m.IsActive, new { @class = "form-check-input", role = "switch", id = "isActiveSwitch" })
+                                    <label class="form-check-label ms-2" for="isActiveSwitch">Đang bán sản phẩm</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <div class="card-header">
+                        <div class="card-title"><i class="bi bi-image"></i> Ảnh đại diện</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="p-3 rounded mb-3 text-center" style="background: rgba(255,255,255,0.03); border: 1px dashed var(--border-color);">
+                            <i class="bi bi-cloud-arrow-up fs-2 text-primary"></i>
+                            <p class="small text-secondary mb-2">Chọn ảnh mới để thay thế ảnh cũ</p>
+                            <input type="file" name="PrimaryImage" class="form-control form-control-sm" />
+                        </div>
+                        <div class="stat-footer info">
+                            <i class="bi bi-info-circle me-1"></i> Định dạng: JPG, PNG (Max 2MB)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column gap-2">
+                    <button type="submit" class="btn btn-primary w-100 py-3">
+                        <i class="bi bi-check-circle-fill"></i> Lưu thay đổi
+                    </button>
+                    <a href="@Url.Action("Index")" class="btn btn-secondary w-100">
+                        Hủy bỏ
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Tự động tạo Slug khi sửa tên sản phẩm
+            function generateSlug(text) {
+                return text.toString().toLowerCase()
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+                    .replace(/[đĐ]/g, 'd')
+                    .replace(/([^0-9a-z-\s])/g, '')
+                    .replace(/(\s+)/g, '-')
+                    .replace(/-+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+            }
+
+            $("#ProductName").on("input", function () {
+                $("#ProductSlug").val(generateSlug($(this).val()));
+            });
+        });
+    </script>
+}

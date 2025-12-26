@@ -1,0 +1,96 @@
+﻿@model FashionStore.Models.Product
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Title = "Xóa Sản phẩm";
+}
+
+<div class="page-header">
+    <h1 class="page-title" style="background: linear-gradient(135deg, var(--danger), #ff8080); -webkit-background-clip: text; color: transparent;">
+        Xác nhận xóa Sản phẩm
+    </h1>
+    <p class="page-subtitle">Hành động này mang tính vĩnh viễn và không thể khôi phục dữ liệu.</p>
+</div>
+
+<div class="d-flex justify-content-center">
+    <div class="content-card col-12 col-lg-7 border-danger-subtle">
+        <div class="card-header" style="background: rgba(239, 68, 68, 0.05);">
+            <div class="card-title text-danger">
+                <i class="bi bi-exclamation-triangle-fill"></i> Cảnh báo hệ thống
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="alert-item mb-4" style="background: rgba(239, 68, 68, 0.1); border-color: var(--danger);">
+                <div class="alert-info">
+                    <div class="product-name" style="color: var(--danger); font-size: 1.1rem;">Bạn sắp xóa: @Model.ProductName</div>
+                    <div class="variant-info">
+                        Lưu ý: Tất cả <strong>Biến thể (Size/Màu)</strong>, <strong>Hình ảnh</strong> và <strong>Đánh giá</strong> liên quan đến sản phẩm này cũng sẽ bị xóa khỏi cơ sở dữ liệu.
+                    </div>
+                </div>
+                <div class="stock-badge danger">
+                    <i class="bi bi-trash3-fill"></i>
+                </div>
+            </div>
+
+            <div class="p-4 rounded mb-4" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color);">
+                <div class="row g-3">
+                    <div class="col-sm-4 text-secondary">Tên sản phẩm:</div>
+                    <div class="col-sm-8 fw-bold text-primary">@Model.ProductName</div>
+
+                    <div class="col-sm-4 text-secondary">Mã SKU:</div>
+                    <div class="col-sm-8"><code>@Model.SKU</code></div>
+
+                    <div class="col-sm-4 text-secondary">Giá niêm yết:</div>
+                    <div class="col-sm-8 fw-bold">@Model.BasePrice.ToString("N0") đ</div>
+
+                    <div class="col-sm-4 text-secondary">Danh mục:</div>
+                    <div class="col-sm-8">
+                        <span class="badge secondary">@(Model.Category?.CatName ?? "N/A")</span>
+                    </div>
+                </div>
+            </div>
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.ProductId)
+
+                <div class="d-flex flex-column gap-2">
+                    <button type="submit" class="btn btn-primary py-3" style="background: var(--danger); border: none;">
+                        <i class="bi bi-trash"></i> Xác nhận xóa vĩnh viễn
+                    </button>
+                    <a href="@Url.Action("Index")" class="btn btn-secondary text-center">
+                        Hủy bỏ và quay lại
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Hiệu ứng rung nhẹ đặc trưng cho trang xóa */
+    .border-danger-subtle {
+        border: 1px solid rgba(239, 68, 68, 0.2) !important;
+        animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    }
+
+    @@keyframes shake {
+        10%, 90% {
+            transform: translate3d(-1px, 0, 0);
+        }
+
+        20%, 80% {
+            transform: translate3d(2px, 0, 0);
+        }
+
+        30%, 50%, 70% {
+            transform: translate3d(-3px, 0, 0);
+        }
+
+        40%, 60% {
+            transform: translate3d(3px, 0, 0);
+        }
+    }
+</style>

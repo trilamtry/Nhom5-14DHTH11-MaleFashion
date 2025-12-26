@@ -1,0 +1,135 @@
+﻿@model IEnumerable<FashionStore.Models.ProductReviewViewModel>
+
+@{
+    ViewBag.Title = "Quản lý Đánh giá";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="page-title">Quản lý Đánh giá</h1>
+        <p class="page-subtitle">Theo dõi phản hồi từ khách hàng và quản lý nội dung bình luận.</p>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-icon primary">
+                <i class="bi bi-chat-square-dots"></i>
+            </div>
+        </div>
+        <div class="stat-value">@ViewBag.TotalReviews</div>
+        <div class="stat-label">Tổng đánh giá</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-icon success">
+                <i class="bi bi-calendar-check"></i>
+            </div>
+        </div>
+        <div class="stat-value">@ViewBag.NewReviews</div>
+        <div class="stat-label">Mới (7 ngày qua)</div>
+        <div class="stat-trend up">
+            <i class="bi bi-graph-up"></i> Xu hướng tăng
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-icon warning">
+                <i class="bi bi-chat-left-text"></i>
+            </div>
+        </div>
+        <div class="stat-value">@ViewBag.WithComment</div>
+        <div class="stat-label">Đánh giá có bình luận</div>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert-item mb-4" style="background: rgba(16, 185, 129, 0.1); border-color: var(--success); color: var(--success);">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+    </div>
+}
+
+<div class="content-card">
+    <div class="card-header">
+        <div class="card-title">
+            <i class="bi bi-star-fill text-warning"></i> Danh sách phản hồi
+        </div>
+        <div class="stat-footer info">Cập nhật: @DateTime.Now.ToString("dd/MM HH:mm")</div>
+    </div>
+
+    <div class="card-body p-0">
+        <div class="table-wrapper">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Mã</th>
+                        <th>Khách hàng</th>
+                        <th>Sản phẩm</th>
+                        <th>Nội dung bình luận</th>
+                        <th>Ngày gửi</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <i class="bi bi-chat-dots" style="font-size: 40px; opacity: 0.3;"></i>
+                                <p>Chưa có đánh giá nào từ khách hàng.</p>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td><span class="order-code">@item.ReviewCode</span></td>
+                                <td>
+                                    <div class="fw-bold" style="color: var(--text-primary)">@item.CustomerName</div>
+                                    <div class="variant-info">@item.CustomerPhone</div>
+                                </td>
+                                <td>
+                                    <div class="text-truncate" style="max-width: 180px;" title="@item.ProductName">
+                                        @item.ProductName
+                                    </div>
+                                    <span class="badge secondary" style="font-size: 10px;">
+                                        @item.SizeName | @item.ColorName
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="p-2 rounded" style="background: rgba(255,255,255,0.03); max-width: 250px; border: 1px solid var(--border-color);">
+                                        <div class="small text-secondary text-truncate">
+                                            @(string.IsNullOrEmpty(item.Comment) ? "(Không có nội dung)" : item.Comment)
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="small">@item.CreatedAt.ToString("dd/MM/yyyy")</div>
+                                    <div class="variant-info" style="font-size: 11px;">@item.CreatedAt.ToString("HH:mm")</div>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a href="@Url.Action("Details", new { id = item.ReviewId })" class="btn-action" title="Xem & Phản hồi">
+                                            <i class="bi bi-reply-fill"></i>
+                                        </a>
+                                        <a href="@Url.Action("Delete", new { id = item.ReviewId })" class="btn-action"
+                                           style="color: var(--danger); border-color: rgba(239, 68, 68, 0.2);" title="Xóa">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

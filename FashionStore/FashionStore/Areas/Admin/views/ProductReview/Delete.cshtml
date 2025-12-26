@@ -1,0 +1,91 @@
+﻿@model FashionStore.Models.ProductReview
+
+@{
+    ViewBag.Title = "Xóa đánh giá";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="page-header">
+    <h1 class="page-title text-danger">Xác nhận xóa</h1>
+    <p class="page-subtitle">Hành động này sẽ loại bỏ phản hồi của khách hàng khỏi hệ thống vĩnh viễn.</p>
+</div>
+
+<div class="d-flex justify-content-center">
+    <div class="content-card col-12 col-md-6 border-danger-subtle shadow-lg">
+        <div class="card-header" style="background: rgba(239, 68, 68, 0.05);">
+            <div class="card-title text-danger">
+                <i class="bi bi-exclamation-octagon-fill"></i> Cảnh báo gỡ bỏ dữ liệu
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="alert-item mb-4" style="background: rgba(239, 68, 68, 0.1); border-color: var(--danger);">
+                <div class="alert-info">
+                    <div class="product-name" style="color: var(--danger);">Mã đánh giá: @Model.ReviewCode</div>
+                    <div class="variant-info">
+                        Lưu ý: Sau khi xóa, bạn sẽ không thể khôi phục lại nội dung bình luận này.
+                    </div>
+                </div>
+                <div class="stock-badge danger">
+                    <i class="bi bi-trash3"></i>
+                </div>
+            </div>
+
+            <div class="p-3 rounded mb-4" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color);">
+                <div class="d-flex flex-column gap-3">
+                    <div class="d-flex justify-content-between">
+                        <span class="text-secondary small">Ngày gửi:</span>
+                        <span class="fw-bold">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                    </div>
+                    <div class="border-top pt-3" style="border-color: var(--border-color) !important;">
+                        <span class="text-secondary small d-block mb-2">Nội dung khách hàng đã viết:</span>
+                        <div class="p-3 rounded italic" style="background: rgba(255,255,255,0.03); border-left: 3px solid var(--danger); font-style: italic;">
+                            "@Model.Comment"
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.ReviewId)
+
+                <div class="d-flex flex-column gap-2">
+                    <button type="submit" class="btn btn-primary py-3" style="background: var(--danger); border: none;">
+                        <i class="bi bi-trash-fill me-2"></i> Xác nhận xóa vĩnh viễn
+                    </button>
+                    <a href="@Url.Action("Index")" class="btn btn-secondary text-center">
+                        <i class="bi bi-x-circle me-1"></i> Hủy bỏ và quay lại
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Hiệu ứng rung để cảnh báo khi trang load */
+    .border-danger-subtle {
+        border: 1px solid rgba(239, 68, 68, 0.3) !important;
+        animation: shakeDanger 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    }
+
+    @@keyframes shakeDanger {
+        10%, 90% {
+            transform: translate3d(-1px, 0, 0);
+        }
+
+        20%, 80% {
+            transform: translate3d(2px, 0, 0);
+        }
+
+        30%, 50%, 70% {
+            transform: translate3d(-3px, 0, 0);
+        }
+
+        40%, 60% {
+            transform: translate3d(3px, 0, 0);
+        }
+    }
+</style>

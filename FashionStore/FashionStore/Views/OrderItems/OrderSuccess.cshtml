@@ -1,0 +1,67 @@
+﻿@model FashionStore.Models.Order
+
+@{
+    ViewBag.Title = "Đặt hàng thành công";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__text">
+                    <h4>Đặt hàng thành công</h4>
+                    <div class="breadcrumb__links">
+                        <a href="@Url.Action("Index", "Home")">Trang chủ</a>
+                        <span>Hoàn tất</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="checkout-success spad">
+    <div class="container">
+        <div class="row d-flex justify-content-center">
+            <div class="col-lg-8 text-center">
+                <div class="checkout__success__icon">
+                    <i class="fa fa-check-circle" style="font-size: 80px; color: #111; margin-bottom: 20px;"></i>
+                </div>
+                <div class="checkout__success__text">
+                    <h2 style="font-weight: 700; margin-bottom: 15px;">CẢM ƠN BẠN ĐÃ ĐẶT HÀNG!</h2>
+                    <p style="font-size: 18px; color: #444;">
+                        Mã đơn hàng của bạn là: <strong style="color: #e61e2b;">@Model.OrderCode</strong>
+                    </p>
+                    <p>
+                        Chúng tôi đã nhận được đơn đặt hàng của bạn và đang tiến hành xử lý. 
+                        Thông tin chi tiết đơn hàng đã được gửi tới email của bạn.
+                    </p>
+                    
+                    <div class="order__details__summary" style="background: #f3f2ee; padding: 30px; margin: 30px 0; border-radius: 2px; text-align: left;">
+                        <h5 style="border-bottom: 1px solid #d7d7d7; padding-bottom: 10px; margin-bottom: 15px;">Thông tin nhận hàng</h5>
+                        <p><strong>Người nhận:</strong> @Model.CustomerName</p>
+                        <p><strong>Số điện thoại:</strong> @Model.Phone</p>
+                        <p><strong>Địa chỉ:</strong> @Model.AddressLine</p>
+                        <p><strong>Tổng thanh toán:</strong> <span style="font-weight: 700; color: #111;">@Model.TotalAmount.ToString("N0") đ</span></p>
+                    </div>
+
+                    <div class="checkout__success__btn">
+                        <a href="@Url.Action("Index", "Products")" class="primary-btn">Tiếp tục mua sắm</a>
+                        <a href="@Url.Action("Index", "OrderItems")" class="primary-btn" style="background: #111;">Xem lịch sử đơn hàng</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<style>
+    .checkout-success.spad {
+        padding-top: 100px;
+        padding-bottom: 100px;
+    }
+    .primary-btn {
+        display: inline-block;
+        margin: 10px;
+    }
+</style>

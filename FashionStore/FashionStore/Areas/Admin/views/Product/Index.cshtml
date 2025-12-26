@@ -1,0 +1,143 @@
+﻿@model IEnumerable<FashionStore.Models.Product>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Title = "Quản lý Sản phẩm";
+    var cultureInfo = new System.Globalization.CultureInfo("vi-VN");
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="page-title">Quản lý Sản phẩm</h1>
+        <p class="page-subtitle">Quản lý kho hàng, giá cả và trạng thái hiển thị của các bộ sưu tập.</p>
+    </div>
+    <a href="@Url.Action("Create", "Product", new { area = "Admin" })" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Thêm mới Sản phẩm
+    </a>
+</div>
+
+<div class="content-card">
+    <div class="card-header">
+        <div class="card-title">
+            <i class="bi bi-grid-3x3-gap"></i> Danh mục sản phẩm (@Model.Count())
+        </div>
+        @using (Html.BeginForm("Index", "Product", FormMethod.Get, new { @class = "d-flex gap-2" }))
+        {
+            <input type="text" name="search" value="@Request.QueryString["search"]"
+                   class="form-control" placeholder="Tìm tên, mã SKU..." style="max-width: 250px;">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search"></i>
+            </button>
+            if (!string.IsNullOrEmpty(Request.QueryString["search"]))
+            {
+                <a href="@Url.Action("Index")" class="btn btn-secondary" title="Xóa bộ lọc">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            }
+        }
+    </div>
+
+    <div class="card-body p-0">
+        <div class="table-wrapper">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Ảnh</th>
+                        <th>Thông tin sản phẩm</th>
+                        <th>Danh mục</th>
+                        <th>Giá niêm yết</th>
+                        <th class="text-center">Tồn kho</th>
+                        <th>Trạng thái</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <i class="bi bi-box-seam" style="font-size: 40px; opacity: 0.3;"></i>
+                                <p>Kho hàng đang trống.</p>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
+                        {
+                            // Tính tổng tồn kho từ các biến thể
+                            int totalStock = item.ProductVariants?.Sum(v => v.Stock) ?? 0;
+                            // Lấy ảnh chính
+                            var primaryImage = item.ProductImages?.FirstOrDefault(img => img.IsPrimary) ?? item.ProductImages?.FirstOrDefault();
+
+                            <tr>
+                                <td>
+                                    <div class="product-img-wrapper" style="width: 55px; height: 55px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border-color);">
+                                        @if (primaryImage != null)
+                                        {
+                                            <img src="@Url.Content("~/assets/img/product/" + primaryImage.ImageUrl)" alt="@item.ProductName" style="width: 100%; height: 100%; object-fit: cover;" />
+                                        }
+                                        else
+                                        {
+                                            <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-dark text-muted" style="font-size: 10px;">No Img</div>
+                                        }
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold" style="color: var(--text-primary)">@item.ProductName</div>
+                                    <div class="variant-info">SKU: <span class="text-info">@item.SKU</span></div>
+                                </td>
+                                <td>
+                                    @if (item.Category != null)
+                                    {
+                                        <span class="badge secondary">@item.Category.CatName</span>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="fw-bold text-primary">@item.BasePrice.ToString("N0", cultureInfo) đ</span>
+                                </td>
+                                <td class="text-center">
+                                    @if (totalStock <= 5)
+                                    {
+                                        <span class="badge danger" title="Sắp hết hàng">@totalStock</span>
+                                    }
+                                    else if (totalStock <= 20)
+                                    {
+                                        <span class="badge warning">@totalStock</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge success">@totalStock</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge success"><i class="bi bi-check-circle me-1"></i>Đang bán</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge secondary"><i class="bi bi-pause-circle me-1"></i>Ngừng bán</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a href="@Url.Action("Index", "ProductVariant", new { productId = item.ProductId, area = "Admin" })" class="btn-action" title="Quản lý kho (Biến thể)">
+                                            <i class="bi bi-stack"></i>
+                                        </a>
+                                        <a href="@Url.Action("Edit", "Product", new { id = item.ProductId, area = "Admin" })" class="btn-action" title="Chỉnh sửa">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a href="@Url.Action("Delete", "Product", new { id = item.ProductId, area = "Admin" })" class="btn-action" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.2);" title="Xóa">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

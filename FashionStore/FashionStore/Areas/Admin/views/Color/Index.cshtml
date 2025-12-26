@@ -1,0 +1,87 @@
+﻿@model IEnumerable<FashionStore.Models.Color>
+
+@{
+    ViewBag.Title = "Quản lý Màu sắc";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="page-title">Quản lý Màu sắc</h1>
+        <p class="page-subtitle">Thiết lập bảng màu cho các biến thể sản phẩm thời trang.</p>
+    </div>
+    <a href="@Url.Action("Create")" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Thêm Màu mới
+    </a>
+</div>
+
+<div class="content-card">
+    <div class="card-header">
+        <div class="card-title">
+            <i class="bi bi-palette"></i> Bảng màu hệ thống
+        </div>
+        <div class="stat-footer info">
+            Tổng cộng: <strong>@Model.Count()</strong> mã màu
+        </div>
+    </div>
+
+    <div class="card-body p-0">
+        <div class="table-wrapper">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Tên Màu</th>
+                        <th>Mã Hex</th>
+                        <th class="text-center">Minh họa</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="4" class="empty-state">
+                                <i class="bi bi-paint-bucket" style="font-size: 40px; color: var(--text-secondary); opacity: 0.3;"></i>
+                                <p>Chưa có dữ liệu màu sắc nào.</p>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="fw-bold" style="color: var(--text-primary)">@item.ColorName</span>
+                                </td>
+                                <td>
+                                    <code style="color: var(--secondary-color); font-size: 14px; letter-spacing: 1px;">
+                                        @item.ColorHex.ToUpper()
+                                    </code>
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-inline-block p-1 rounded-circle border" style="border-color: var(--border-color) !important; line-height: 0;">
+                                        <span class="d-inline-block rounded-circle"
+                                              style="width: 24px; height: 24px; background-color: @item.ColorHex; box-shadow: 0 0 10px rgba(0,0,0,0.2);">
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a href="@Url.Action("Edit", new { id = item.ColorId })" class="btn-action" title="Chỉnh sửa">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a href="@Url.Action("Delete", new { id = item.ColorId })" class="btn-action"
+                                           style="color: var(--danger); border-color: rgba(239, 68, 68, 0.2);" title="Xóa màu">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

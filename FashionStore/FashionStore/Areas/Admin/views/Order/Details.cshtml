@@ -1,0 +1,142 @@
+﻿@model FashionStore.Models.Order
+@{
+    ViewBag.Title = "Chi tiết đơn hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var cultureInfo = new System.Globalization.CultureInfo("vi-VN");
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="page-title">Đơn hàng #@Model.OrderCode</h1>
+        <p class="page-subtitle">Quản lý nội dung sản phẩm và tiến độ giao hàng.</p>
+    </div>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Quay lại
+    </a>
+</div>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert-item mb-4" style="background: rgba(16, 185, 129, 0.1); border-color: var(--success); color: var(--success);">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["Message"]
+    </div>
+}
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="content-card">
+            <div class="card-header">
+                <div class="card-title"><i class="bi bi-box-seam"></i> Sản phẩm trong đơn</div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-wrapper">
+                    <table class="modern-table">
+                        <thead>
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th>Phân loại</th>
+                                <th class="text-center">Số lượng</th>
+                                <th class="text-end">Đơn giá</th>
+                                <th class="text-end">Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.OrderItems)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="fw-bold" style="color: var(--text-primary)">@item.ProductName</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge secondary">@item.SizeName</span>
+                                        <span class="badge info">@item.ColorName</span>
+                                    </td>
+                                    <td class="text-center">@item.Quantity</td>
+                                    <td class="text-end">@item.UnitPrice.ToString() đ</td>
+                                    <td class="text-end fw-bold" style="color: var(--text-primary)">
+                                        @((item.Quantity * item.UnitPrice).ToString()) đ
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-body" style="background: rgba(255,255,255,0.02)">
+                <div class="d-flex justify-content-end align-items-center gap-4">
+                    <div class="text-secondary">Tổng thanh toán:</div>
+                    <div class="stat-value text-primary" style="font-size: 24px;">
+                        @Model.TotalAmount.ToString("N0", cultureInfo) đ
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 d-flex flex-column gap-4">
+        <div class="content-card">
+            <div class="card-header">
+                <div class="card-title"><i class="bi bi-geo-alt"></i> Giao hàng</div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-column gap-3">
+                    <div>
+                        <div class="variant-info">Người nhận</div>
+                        <div class="fw-bold">@Model.CustomerName</div>
+                    </div>
+                    <div>
+                        <div class="variant-info">Số điện thoại</div>
+                        <div class="fw-bold">@Model.Phone</div>
+                    </div>
+                    <div>
+                        <div class="variant-info">Địa chỉ</div>
+                        <div class="fw-bold" style="font-size: 13px;">@Model.AddressLine</div>
+                    </div>
+                    <div class="p-2 rounded" style="background: rgba(245, 158, 11, 0.1); border: 1px dashed var(--warning);">
+                        <div class="variant-info" style="color: var(--warning);">Ghi chú khách hàng</div>
+                        <div style="font-size: 13px; font-style: italic;">
+                            @(string.IsNullOrEmpty(Model.MessageCard) ? "Không có ghi chú" : Model.MessageCard)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <div class="card-header">
+                <div class="card-title"><i class="bi bi-arrow-repeat"></i> Xử lý đơn</div>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <div class="variant-info mb-2">Trạng thái hiện tại:</div>
+                    @switch (Model.Status)
+                    {
+                        case "PENDING":<span class="badge warning p-2 w-100 justify-content-center">Chờ xử lý</span>; break;
+                        case "SHIPPING": <span class="badge info p-2 w-100 justify-content-center">Đang giao hàng</span>; break;
+                        case "COMPLETED": <span class="badge success p-2 w-100 justify-content-center">Hoàn thành</span>; break;
+                        case "CANCELLED": <span class="badge danger p-2 w-100 justify-content-center">Đã hủy</span>; break;
+                    }
+                </div>
+
+                @using (Html.BeginForm("UpdateStatus", "Order", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.Hidden("id", Model.OrderId)
+
+                    <div class="form-group mb-3">
+                        <label class="form-label">Thay đổi trạng thái:</label>
+                        <select name="status" class="form-control">
+                            <option value="PENDING" @(Model.Status == "PENDING" ? "selected" : "")>Chờ xử lý</option>
+                            <option value="SHIPPING" @(Model.Status == "SHIPPING" ? "selected" : "")>Đang giao hàng</option>
+                            <option value="COMPLETED" @(Model.Status == "COMPLETED" ? "selected" : "")>Hoàn thành</option>
+                            <option value="CANCELLED" @(Model.Status == "CANCELLED" ? "selected" : "")>Hủy đơn</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-check2-circle"></i> Cập nhật ngay
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+</div>

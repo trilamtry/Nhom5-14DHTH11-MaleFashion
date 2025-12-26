@@ -1,0 +1,94 @@
+﻿@model IEnumerable<FashionStore.Models.Size>
+
+@{
+    ViewBag.Title = "Quản lý Size";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="page-title">Quản lý Kích thước</h1>
+        <p class="page-subtitle">Thiết lập các quy chuẩn Size (S, M, L, XL...) cho các dòng sản phẩm thời trang.</p>
+    </div>
+    <a href="@Url.Action("Create")" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Thêm Size mới
+    </a>
+</div>
+
+<div class="content-card">
+    <div class="card-header">
+        <div class="card-title">
+            <i class="bi bi-rulers"></i> Hệ thống Kích cỡ (@Model.Count())
+        </div>
+        <div class="stat-footer info">Dữ liệu dùng chung cho toàn bộ kho hàng</div>
+    </div>
+
+    <div class="card-body p-0">
+        <div class="table-wrapper">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th style="width: 250px;">Tên Size (Code)</th>
+                        <th>Thứ tự hiển thị</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="3" class="empty-state">
+                                <i class="bi bi-slash-circle" style="font-size: 40px; opacity: 0.3;"></i>
+                                <p>Chưa có dữ liệu kích thước.</p>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="badge secondary" style="font-size: 14px; padding: 8px 15px; min-width: 50px;">
+                                        @item.SizeCode
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-sort-numeric-down text-primary"></i>
+                                        <span style="color: var(--text-primary); font-weight: 500;">Bậc @item.SortOrder</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a href="@Url.Action("Edit", new { id = item.SizeId })" class="btn-action" title="Chỉnh sửa">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a href="@Url.Action("Delete", new { id = item.SizeId })" class="btn-action"
+                                           style="color: var(--danger); border-color: rgba(239, 68, 68, 0.2);" title="Xóa">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@* Một mẹo nhỏ: Thêm bảng gợi ý size phổ biến ở chân trang *@
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="alert-item" style="background: rgba(99, 102, 241, 0.05); border-color: var(--border-color);">
+            <div class="alert-info">
+                <i class="bi bi-lightbulb text-primary"></i>
+                <small class="text-secondary ms-2">
+                    <strong>Gợi ý:</strong> Thứ tự hiển thị nên được sắp xếp từ nhỏ đến lớn (VD: S = 1, M = 2, L = 3) để bộ lọc ngoài trang người dùng hiển thị logic hơn.
+                </small>
+            </div>
+        </div>
+    </div>
+</div>

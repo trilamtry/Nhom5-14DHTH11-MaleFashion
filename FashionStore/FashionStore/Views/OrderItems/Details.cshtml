@@ -1,0 +1,66 @@
+﻿@model IEnumerable<FashionStore.Models.OrderItem>
+
+@{
+    ViewBag.Title = "Chi tiết đơn hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    decimal totalOrder = 0;
+}
+<section class="shopping-cart spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="shopping__cart__table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th>Màu sắc / Size</th>
+                                <th>Số lượng</th>
+                                <th>Giá mua</th>
+                                <th>Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                decimal unitPrice = (decimal)item.UnitPrice;
+                                int quantity = (int)item.Quantity;
+                                decimal subtotal = unitPrice * quantity;
+                                totalOrder += subtotal;
+                                <tr>
+                                    <td class="product__cart__item">
+                                        <div class="product__cart__item__text">
+                                            <h6>@item.ProductName</h6>
+                                        </div>
+                                    </td>
+                                    <td class="cart__price">
+                                        @item.ColorName / @item.SizeName
+                                    </td>
+                                    <td class="cart__price" style="text-align: center;">
+                                        @item.Quantity
+                                    </td>
+                                    <td class="cart__price">
+                                        @item.UnitPrice.ToString() đ
+                                    </td>
+                                    <td class="cart__price">
+                                        @subtotal.ToString("N0") đ
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 text-right">
+                        <div class="cart__total" style="display: inline-block; min-width: 300px;">
+                            <ul>
+                                <li>Tổng giá trị đơn hàng <span>@totalOrder.ToString("N0") đ</span></li>
+                            </ul>
+                            <a href="@Url.Action("Index", "OrderItems")" class="primary-btn" style="background: #111;">Quay lại danh sách</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

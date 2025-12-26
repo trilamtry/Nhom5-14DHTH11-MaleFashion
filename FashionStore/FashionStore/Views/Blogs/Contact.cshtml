@@ -1,0 +1,81 @@
+﻿@{
+    ViewBag.Title = "Contact";
+}
+
+<style>
+    /* Ép ẩn tất cả các thành phần NiceSelect nào xuất hiện bên trong SweetAlert */
+    .swal2-container .nice-select {
+        display: none !important;
+    }
+
+    /* Đảm bảo chữ không bị lỗi font */
+    .swal2-html-container p {
+        font-family: inherit;
+        font-size: 16px;
+    }
+</style>
+
+<main aria-labelledby="title">
+    <section class="contact spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md-6">
+                    <div class="contact__text">
+                        <div class="section-title">
+                            <span>Thông tin liên hệ</span>
+                            <h2>Hãy liên hệ với chúng tôi!</h2>
+                            <p>Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn 24/7 về các đơn hàng và sản phẩm.</p>
+                        </div>
+                        <ul>
+                            <li>
+                                <h4>Việt Nam</h4>
+                                <p>Số 123 Đường ABC, Quận 1, TP. Hồ Chí Minh <br />+84 123 456 789</p>
+                            </li>
+                            <li>
+                                <h4>Email</h4>
+                                <p>support@malefashion.com</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <div class="contact__form">
+                        <form action="@Url.Action("SendContact", "Blogs")" method="post">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <input type="text" name="FullName" placeholder="Tên của bạn" required>
+                                </div>
+                                <div class="col-lg-6">
+                                    <input type="email" name="Email" placeholder="Email" required>
+                                </div>
+                                <div class="col-lg-12">
+                                    <textarea name="MessageText" placeholder="Nội dung tin nhắn" required></textarea>
+                                    <button type="submit" class="site-btn">Gửi tin nhắn</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="map">
+        <iframe src="https://www.google.com/maps/embed?pb=..." height="500" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@if (TempData["Message"] != null)
+{
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Thành công!',
+            // Dùng html thay vì text để xử lý lỗi font chữ tiếng Việt (à, ờ, ...)
+            html: '<p style="margin-top:10px;">@Html.Raw(TempData["Message"])</p>',
+            confirmButtonText: 'Đồng ý',
+            confirmButtonColor: '#111111',
+            width: '400px'
+        });
+    </script>
+}

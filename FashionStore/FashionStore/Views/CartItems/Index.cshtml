@@ -1,0 +1,89 @@
+﻿@model IEnumerable<FashionStore.Models.CartItem>
+
+@{
+    ViewBag.Title = "Giỏ hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Sử dụng layout chung để giữ Header/Footer
+    decimal totalCart = 0;
+}
+<section class="shopping-cart spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="shopping__cart__table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th>Số lượng</th>
+                                <th>Tổng</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                foreach (var item in Model)
+                                {
+                                    var subtotal = (item.Quantity ?? 0) * item.UnitPrice;
+                                    totalCart += subtotal;
+
+                                    <tr>
+                                        <td class="product__cart__item">
+                                            <div class="product__cart__item__pic">
+                                                <img src="@Url.Content("~/assets/img/product/" + item.ProductVariant.Product.ProductImages.FirstOrDefault().ImageUrl)" alt="" style="width: 90px;">
+                                            </div>
+                                            <div class="product__cart__item__text">
+                                                <h6>@item.ProductVariant.Product.ProductName</h6>
+                                                <h5>@item.UnitPrice.ToString("N0") đ</h5>
+                                                <small>SKU: @item.ProductVariant.SKU</small>
+                                            </div>
+                                        </td>
+                                        <td class="quantity__item">
+                                            <div class="quantity">
+                                                <div style="font-weight: bold; color: #111; font-size: 16px; text-align: center;">
+                                                    x @item.Quantity
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="cart__price">@subtotal.ToString("N0") đ</td>
+                                        <td class="cart__close">
+                                            @using (Html.BeginForm("RemoveFromCart", "CartItems", new { cartItemId = item.CartItemId }, FormMethod.Post))
+                                            {
+                                                @Html.AntiForgeryToken() @* Thêm để bảo mật nếu Controller có [ValidateAntiForgeryToken] *@
+                                                <button type="submit" style="background: none; border: none; padding: 0; cursor: pointer;">
+                                                    <i class="fa fa-close"></i>
+                                                </button>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center">Giỏ hàng của bạn đang trống.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="continue__btn">
+                            <a href="@Url.Action("Index", "Products")">Tiếp tục mua sắm</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="cart__total">
+                    <h6>Tổng tiền giỏ hàng</h6>
+                    <ul>
+                        <li>Tổng cộng <span>@totalCart.ToString("N0") đ</span></li>
+                    </ul>
+                    <a href="@Url.Action("Checkout", "OrderItems")" class="primary-btn">Tiến hành thanh toán</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

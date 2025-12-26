@@ -1,0 +1,490 @@
+﻿@model FashionStore.Models.Product
+
+@{
+    ViewData["Title"] = Model.ProductName;
+}
+<style>
+    /* Container chính */
+    .product-selection {
+        background: #fdfdfd;
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid #f0f0f0;
+    }
+
+    /* Tùy chỉnh các nút Radio thành các ô vuông/tròn */
+    .selection-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .variant-box {
+        cursor: pointer;
+    }
+
+        .variant-box label {
+            min-width: 50px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ddd;
+            border-radius: 4px; /* Bo góc nhẹ */
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            padding: 0 15px;
+            background: #fff;
+            margin-bottom: 0;
+        }
+
+        /* Khi Hover */
+        .variant-box:hover label {
+            border-color: #000;
+        }
+
+    /* Khi được chọn (Check) */
+    .btn-check:checked + label {
+        background-color: #000 !important;
+        color: #fff !important;
+        border-color: #000 !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    /* Nút Add to Cart */
+    #btnAddToCart {
+        background: #000;
+        border: none;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+    }
+
+        #btnAddToCart:hover:not(:disabled) {
+            background: #333;
+            transform: translateY(-2px);
+        }
+
+        #btnAddToCart:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+    /* Input số lượng */
+    .quantity-input {
+        border-radius: 8px !important;
+        text-align: center;
+        font-weight: bold;
+    }
+    .detail-img-box {
+        width: 120px;
+        height: 120px;
+        border: 1px solid #ddd;
+        overflow: hidden;
+        border-radius: 6px;
+    }
+    /* ===== PRODUCT DETAIL GALLERY ===== */
+
+    .product-detail-gallery {
+        display: flex;
+        gap: 12px;
+        flex-wrap: nowrap;
+    }
+
+    .detail-img-box {
+        width: 100px;
+        height: 100px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        overflow: hidden;
+        cursor: pointer;
+        background: #fff;
+    }
+
+        .detail-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .detail-img-box:hover {
+            border-color: #000;
+            transform: scale(1.05);
+            transition: all 0.2s ease;
+        }
+    /* Tab Header Styling */
+    .nav-tabs .nav-link {
+        color: #111;
+        font-weight: 600;
+        text-transform: uppercase;
+        border: none;
+    }
+
+        .nav-tabs .nav-link.active {
+            color: #ca1515 !important;
+            border-bottom: 2px solid #ca1515;
+        }
+
+    .related-products .product__item__text *,
+    .related-products .product__item__text {
+        position: static !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        transform: none !important;
+    }
+
+    /* Container text */
+    .related-products .product__item__text {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px;
+        padding: 15px;
+        text-align: center !important;
+    }
+
+    /* ADD TO CART */
+    .related-products .add-cart {
+        order: 1 !important;
+        display: block !important;
+        position: relative !important;
+        opacity: 0;
+        visibility: hidden;
+        color: #ca1515 !important;
+        font-weight: 700;
+        transition: opacity 0.3s ease;
+    }
+
+    /* PRODUCT NAME */
+    .related-products .product__item__text h6 {
+        order: 2 !important;
+        margin: 0 !important;
+        line-height: 1.4;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    /* PRICE */
+    .related-products .product__item__text h5 {
+        order: 3 !important;
+        margin: 0 !important;
+    }
+
+    /* HOVER */
+    .related-products .product__item:hover .add-cart {
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    /* 🚫 CHẶN TOÀN BỘ ANIMATION CŨ */
+    .related-products .product__item:hover .product__item__text h6,
+    .related-products .product__item:hover .product__item__text h5 {
+        top: 0 !important;
+        opacity: 1 !important;
+        transform: none !important;
+
+    }
+</style>
+
+<section class="shop-details spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="main-img-container mb-3">
+                    <img id="mainImage" class="img-fluid border rounded"
+                         src="~/assets/img/product/@(Model.ProductImages.FirstOrDefault(img => img.IsPrimary == true)?.ImageUrl ?? Model.ProductImages.FirstOrDefault()?.ImageUrl ?? "default.jpg")"
+                         style="width: 100%; height: 500px; object-fit: cover;" />
+                </div>
+
+                <div class="product-detail-gallery d-flex gap-2 flex-wrap">
+                    @foreach (var img in Model.ProductImages)
+                    {
+                        <div class="detail-img-box @(img.IsPrimary == true ? "active" : "")">
+                            <img src="~/assets/img/product/@img.ImageUrl"
+                                 onclick="changeMainImage(this)"
+                                 class="img-thumbnail"
+                                 style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;" />
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <h3 class="fw-bold">@Model.ProductName</h3>
+                <h4 class="text-danger mb-4" id="displayPrice">@Model.BasePrice.ToString("#,##0") đ</h4>
+
+                <div class="product-selection shadow-sm">
+                    @using (Html.BeginForm("AddToCart", "CartItems", FormMethod.Post))
+                    {
+                        <input type="hidden" name="variantId" id="finalVariantId" value="" required />
+
+                        <div class="mb-4">
+                            <label class="text-uppercase small fw-bold text-secondary mb-2 d-block">Kích cỡ:</label>
+                            <div class="selection-grid">
+                                @foreach (var size in Model.ProductVariants
+                                    .Select(v => v.Size).GroupBy(s => s.SizeId).Select(g => g.First()))
+                                {
+                                    <div class="variant-box">
+                                        <input type="radio" class="btn-check" name="sizeAttr" id="size-@size.SizeId" value="@size.SizeId" onchange="checkVariant()">
+                                        <label class="btn" for="size-@size.SizeId">@size.SizeCode</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="text-uppercase small fw-bold text-secondary mb-2 d-block">Màu sắc:</label>
+                            <div class="selection-grid">
+                                @foreach (var color in Model.ProductVariants
+                                    .Select(v => v.Color).GroupBy(s => s.ColorId).Select(g => g.First()))
+                                {
+                                    <div class="variant-box">
+                                        <input type="radio" class="btn-check" name="colorAttr" id="color-@color.ColorId" value="@color.ColorId" onchange="checkVariant()">
+                                        <label class="btn" for="color-@color.ColorId">@color.ColorName</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="row align-items-end mb-4">
+                            <div class="col-4">
+                                <label class="text-uppercase small fw-bold text-secondary mb-2 d-block">Số lượng:</label>
+                                <input type="number" name="quantity" class="form-control quantity-input" value="1" min="1">
+                            </div>
+                            <div class="col-8">
+                                <button type="submit" id="btnAddToCart" class="btn btn-dark w-100 py-2 fw-bold" disabled>
+                                    <i class="fa fa-shopping-cart me-2"></i> THÊM VÀO GIỎ
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="msg" class="alert alert-light py-2 px-3 small border-0 text-center" style="background: #f8f9fa;">
+                            <i class="fa fa-info-circle me-1"></i> Vui lòng chọn kích cỡ và màu sắc
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Giới thiệu/ Đánh giá sản phẩm của khách hàng -->
+        <div class="row mt-5">
+            <div class="col-lg-12">
+                <h5 class="fw-bold">Mô tả</h5>
+                <p>@Model.Description</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="product__details__tab">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#tabs-5"
+                               role="tab">Giới thiệu sản phẩm</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#tabs-6" role="tab">
+                                Đánh giá (@(ViewBag.Reviews != null ? ViewBag.Reviews.Count : 0))
+
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tabs-5" role="tabpanel">
+                            <div class="product__details__tab__content">
+                                <p class="note">
+
+                                </p>
+                                <div class="product__details__tab__content__item">
+                                    <h5>Giới thiệu sản phẩm</h5>
+                                    <p>
+                                        Chiếc quần short jean này là sự lựa chọn hoàn hảo cho những chàng trai yêu thích phong cách năng động và phóng khoáng. Với thiết kế hiện đại, form dáng vừa vặn giúp tôn lên vẻ ngoài trẻ trung nhưng vẫn đảm bảo sự thoải mái tuyệt đối cho người mặc trong mọi hoạt động hàng ngày. Điểm nhấn của sản phẩm nằm ở những đường wash màu tinh tế cùng đường kim mũi chỉ chắc chắn, mang đến một vẻ đẹp bụi bặm nhưng không kém phần chỉn chu. Dù là kết hợp cùng áo thun đơn giản để dạo phố hay phối cùng sơ mi cho những buổi gặp gỡ bạn bè, chiếc quần này vẫn giúp bạn khẳng định gu thời trang cá tính và hiện đại của mình.
+                                    </p>
+                                    <p>
+                                        Sản phẩm được chế tác từ dòng vải Denim cao cấp với sự kết hợp hoàn hảo giữa sợi Cotton tự nhiên và sợi co giãn Spandex. Chất liệu Cotton giúp bề mặt vải có độ bền cao, khả năng thấm hút mồ hôi cực tốt và cực kỳ thoáng mát, phù hợp với khí hậu nóng ẩm. Việc pha thêm sợi co giãn giúp chiếc quần có độ đàn hồi linh hoạt, không gây cảm giác gò bó khi vận động mạnh hay ngồi lâu. Đặc biệt, vải đã trải qua quy trình xử lý công nghệ cao giúp bề mặt mềm mại hơn, hạn chế tối đa tình trạng nhăn nhúm hay phai màu sau nhiều lần giặt, giữ cho sản phẩm luôn trông như mới.
+                                    </p>
+                                </div>
+                                <div class="product__details__tab__content__item">
+                                    <h5>Chất liệu sử dụng</h5>
+                                    <p>
+                                        Sản phẩm được chế tác từ dòng vải Denim cao cấp với sự kết hợp hoàn hảo giữa sợi Cotton tự nhiên và sợi co giãn Spandex. Chất liệu Cotton giúp bề mặt vải có độ bền cao, khả năng thấm hút mồ hôi cực tốt và cực kỳ thoáng mát, phù hợp với khí hậu nóng ẩm. Việc pha thêm sợi co giãn giúp chiếc quần có độ đàn hồi linh hoạt, không gây cảm giác gò bó khi vận động mạnh hay ngồi lâu. Đặc biệt, vải đã trải qua quy trình xử lý công nghệ cao giúp bề mặt mềm mại hơn, hạn chế tối đa tình trạng nhăn nhúm hay phai màu sau nhiều lần giặt, giữ cho sản phẩm luôn trông như mới.
+                                    </p>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                        <div class="tab-pane" id="tabs-6" role="tabpanel">
+                            <div class="product__details__tab__content">
+                                <div class="product__details__tab__content__item">
+                                    <h4 class="fw-bold mb-4 text-uppercase">Khách hàng nhận xết</h4>
+
+
+                                    @if (ViewBag.Reviews != null && ((List<FashionStore.Models.ReviewViewModel>)ViewBag.Reviews).Any())
+                                    {
+                                        foreach (var rev in (List<FashionStore.Models.ReviewViewModel>)ViewBag.Reviews)
+                                        {
+                                            <div class="review-item border-bottom mb-3 pb-3">
+                                                <div class="d-flex justify-content-between">
+                                                    <strong>@rev.FullName</strong>
+                                                    <small class="text-muted">@rev.CreatedAt.ToString("dd/MM/yyyy")</small>
+                                                </div>
+
+                                                <div class="rating-stars text-warning my-1">
+                                                    @for (int i = 1; i <= 5; i++)
+                                                    {
+                                                        <i class="fa @(i <= rev.Rating ? "fa-star" : "fa-star-o")"></i>
+                                                    }
+                                                </div>
+                                                <p class="mb-0">@rev.Comment</p>
+                                                <small class="text-secondary">Phân loại: @rev.ColorName, @rev.SizeName</small>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="text-center py-5">
+                                            <i class="fa fa-comments-o fa-3x text-muted mb-3"></i>
+                                            <p class="text-muted">Sản phẩm này chưa có đánh giá nào. Hãy là người đầu tiên mua và nhận xét!</p>
+                                        </div>
+                                    }
+
+
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                        <h4 class="fw-bold text-uppercase mb-0">Khách hàng nhận xét</h4>
+
+                                        @if (TempData["ReviewMessage"] != null)
+                                        {
+                                            <div class="alert alert-@TempData["MessageType"] alert-dismissible fade show" role="alert">
+                                                <strong><i class="fa fa-info-circle"></i></strong> @TempData["ReviewMessage"]
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            </div>
+                                        }
+
+                                        @if (Session["User"] != null)
+                                        {
+                                            @* Sửa "ProductReview" thành "ProductReviews" (phải khớp với tên File Controller của bạn) *@
+                                            <a href="@Url.Action("Create", "ProductReviews", new { productId = Model.ProductId })"
+                                               class="btn btn-danger btn-sm">
+                                                <i class="fa fa-pencil"></i> Viết đánh giá
+                                            </a>
+
+                                        }
+                                        else
+                                        {
+                                            <a href="@Url.Action("Login", "AppUsers", new { returnUrl = Request.RawUrl })"
+                                               class="btn btn-outline-secondary btn-sm">
+                                                đăng nhập Viết đánh giá
+                                            </a>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-5 related-products">
+                            <div class="col-lg-12">
+                                <h4 class="text-center mb-4 text-uppercase fw-bold">Sản phẩm liên quan</h4>
+                            </div>
+                            @if (ViewBag.RelatedProducts != null)
+                            {
+                                foreach (var item in (List<FashionStore.Models.Product>)ViewBag.RelatedProducts)
+                                {
+                                    // 1. Xử lý lấy ảnh hiển thị
+                                    var primaryImage = item.ProductImages?.FirstOrDefault(img => img.IsPrimary == true)
+                                                      ?? item.ProductImages?.FirstOrDefault();
+                                    var imgUrl = primaryImage != null ? primaryImage.ImageUrl : "default.jpg";
+
+                                    <div class="col-lg-3 col-md-6 col-sm-6 mix new-arrivals">
+                                        <div class="product__item">
+                                            @* 2. Link đến chi tiết sản phẩm *@
+                                            <a href="@Url.Action("Details", "Products", new { id = item.ProductId })">
+                                                <div class="product__item__pic set-bg"
+                                                     data-setbg="@Url.Content("~/assets/img/product/" + imgUrl)"
+                                                     style="background-image: url('@Url.Content("~/assets/img/product/" + imgUrl)')">
+                                                </div>
+                                            </a>
+
+                                            <div class="product__item__text">
+                                                @* 3. HIỂN THỊ TÊN SẢN PHẨM Ở ĐÂY *@
+                                                <h6><a href="@Url.Action("Details", "Products", new { id = item.ProductId })" class="text-dark">@item.ProductName</a></h6>
+                                                @* 4. Hiển thị giá *@
+                                                <h5>@item.BasePrice.ToString("#,##0") đ</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </div>
+</section>
+
+
+<script>
+    // 1. Chuyển đổi danh sách biến thể từ Model sang JSON
+    const productVariants = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ProductVariants.Select(v => new {
+        v.VariantId,
+        v.SizeId,
+        v.ColorId,
+        Price = v.Price.ToString("#,##0"),
+        v.Stock
+    })));
+
+    function checkVariant() {
+        // Lấy SizeId và ColorId đang được chọn
+        const selectedSize = document.querySelector('input[name="sizeAttr"]:checked')?.value;
+        const selectedColor = document.querySelector('input[name="colorAttr"]:checked')?.value;
+
+        const btn = document.getElementById('btnAddToCart');
+        const msg = document.getElementById('msg');
+        const priceLabel = document.getElementById('displayPrice');
+        const hiddenInput = document.getElementById('finalVariantId');
+
+        // Nếu đã chọn cả Size và Color
+        if (selectedSize && selectedColor) {
+            // Tìm biến thể khớp
+            const match = productVariants.find(v => v.SizeId == selectedSize && v.ColorId == selectedColor);
+
+            if (match) {
+                if (match.Stock > 0) {
+                    // Đảm bảo gán giá trị VariantId vào input hidden
+                    document.getElementById('finalVariantId').value = match.VariantId;
+                    priceLabel.innerText = match.Price + " đ";
+                    btn.disabled = false;
+                    msg.innerText = "Sản phẩm có sẵn: " + match.Stock;
+                    msg.className = "text-success mt-2 small";                
+                } else {
+                    btn.disabled = true;
+                    msg.innerText = "Xin lỗi, phân loại này đã hết hàng!";
+                    msg.className = "text-danger mt-2 small";
+                }
+            } else {
+                btn.disabled = true;
+                msg.innerText = "Cửa hàng không có tổ hợp Size/Màu này.";
+                msg.className = "text-danger mt-2 small";
+            }
+        }
+    }
+
+    // Logic đổi ảnh chính khi click ảnh nhỏ
+    document.querySelectorAll('.detail-img-box img').forEach(img => {
+        img.addEventListener('click', function () {
+            document.getElementById('mainImage').src = this.src;
+            document.querySelectorAll('.detail-img-box').forEach(box => box.style.borderColor = '#ddd');
+            this.parentElement.style.borderColor = '#ca1515';
+        });
+    });
+</script>
