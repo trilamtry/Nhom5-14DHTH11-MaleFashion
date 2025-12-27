@@ -16,6 +16,10 @@ namespace FashionStore.Controllers
         private ShopThoiTrangEntities db = new ShopThoiTrangEntities();
 
         // ProductsController.cs
+        public ActionResult Home()
+        {            
+            return View();
+        }
         public ActionResult Cat()
         {
             var groups = db.CategoryGroups.Where(g => g.IsActive == true).OrderBy(g => g.SortOrder).ToList();

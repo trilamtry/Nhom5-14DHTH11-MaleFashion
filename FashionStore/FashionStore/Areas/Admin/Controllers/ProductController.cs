@@ -97,7 +97,7 @@ namespace FashionStore.Areas.Admin.Controllers
                     string newFileName = product.Slug + "-thumb" + extension;
 
                     // Lưu file vào thư mục ~/Content/img/
-                    string path = Path.Combine(Server.MapPath("~/Content/img/"), newFileName);
+                    string path = Path.Combine(Server.MapPath("~/assets/img/product"), newFileName);
                     model.PrimaryImage.SaveAs(path);
 
                     // Lưu vào bảng ProductImage
